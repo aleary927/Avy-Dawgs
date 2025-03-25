@@ -1,3 +1,6 @@
 [submodule "pcb/spice_libraries/KiCad-Spice-Library"]
 	path = pcb/spice_libraries/KiCad-Spice-Library
 	url = https://github.com/kicad-spice-library/KiCad-Spice-Library.git
+[submodule "mcu/STM32CubeF7"]
+	path = mcu/STM32CubeF7
+	url = https://github.com/STMicroelectronics/STM32CubeF7.git
