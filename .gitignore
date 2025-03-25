@@ -1,0 +1,6 @@
+# exclusions for KiCAD project
+**.bak
+**.kicad_sch.bak
+**.kicad_prl
+**.lck
+**.wbk
