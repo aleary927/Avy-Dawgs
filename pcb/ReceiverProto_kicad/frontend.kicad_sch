@@ -1427,7 +1427,7 @@
 			)
 			(embedded_fonts no)
 		)
-		(symbol "custom_lib:Ferrite_Antenna_tapped"
+		(symbol "antenna:Ferrite_antenna_tapped"
 			(exclude_from_sim no)
 			(in_bom yes)
 			(on_board yes)
@@ -1474,11 +1474,11 @@
 					(hide yes)
 				)
 			)
-			(symbol "Ferrite_Antenna_tapped_0_1"
+			(symbol "Ferrite_antenna_tapped_0_1"
 				(arc
-					(start 0 -3.81)
-					(mid -0.635 -3.175)
-					(end 0 -2.54)
+					(start -2.54 -3.81)
+					(mid -3.175 -3.175)
+					(end -2.54 -2.54)
 					(stroke
 						(width 0)
 						(type default)
@@ -1488,9 +1488,9 @@
 					)
 				)
 				(arc
-					(start 0 -5.08)
-					(mid -0.635 -4.445)
-					(end 0 -3.81)
+					(start -2.54 -5.08)
+					(mid -3.175 -4.445)
+					(end -2.54 -3.81)
 					(stroke
 						(width 0)
 						(type default)
@@ -1500,9 +1500,9 @@
 					)
 				)
 				(arc
-					(start 0 -6.35)
-					(mid -0.635 -5.715)
-					(end 0 -5.08)
+					(start -2.54 -6.35)
+					(mid -3.175 -5.715)
+					(end -2.54 -5.08)
 					(stroke
 						(width 0)
 						(type default)
@@ -1512,9 +1512,9 @@
 					)
 				)
 				(arc
-					(start 0 -7.62)
-					(mid -0.635 -6.985)
-					(end 0 -6.35)
+					(start -2.54 -7.62)
+					(mid -3.175 -6.985)
+					(end -2.54 -6.35)
 					(stroke
 						(width 0)
 						(type default)
@@ -1524,9 +1524,9 @@
 					)
 				)
 				(arc
-					(start 0 -8.89)
-					(mid -0.635 -8.255)
-					(end 0 -7.62)
+					(start -2.54 -8.89)
+					(mid -3.175 -8.255)
+					(end -2.54 -7.62)
 					(stroke
 						(width 0)
 						(type default)
@@ -1536,9 +1536,9 @@
 					)
 				)
 				(arc
-					(start 0 -10.16)
-					(mid -0.635 -9.525)
-					(end 0 -8.89)
+					(start -2.54 -10.16)
+					(mid -3.175 -9.525)
+					(end -2.54 -8.89)
 					(stroke
 						(width 0)
 						(type default)
@@ -1548,9 +1548,9 @@
 					)
 				)
 				(arc
-					(start 0 -11.43)
-					(mid -0.635 -10.795)
-					(end 0 -10.16)
+					(start -2.54 -11.43)
+					(mid -3.175 -10.795)
+					(end -2.54 -10.16)
 					(stroke
 						(width 0)
 						(type default)
@@ -1560,9 +1560,9 @@
 					)
 				)
 				(arc
-					(start 0 -12.7)
-					(mid -0.635 -12.065)
-					(end 0 -11.43)
+					(start -2.54 -12.7)
+					(mid -3.175 -12.065)
+					(end -2.54 -11.43)
 					(stroke
 						(width 0)
 						(type default)
@@ -1572,9 +1572,9 @@
 					)
 				)
 				(arc
-					(start 0 -13.97)
-					(mid -0.635 -13.335)
-					(end 0 -12.7)
+					(start -2.54 -13.97)
+					(mid -3.175 -13.335)
+					(end -2.54 -12.7)
 					(stroke
 						(width 0)
 						(type default)
@@ -1584,9 +1584,9 @@
 					)
 				)
 				(arc
-					(start 0 -15.24)
-					(mid -0.635 -14.605)
-					(end 0 -13.97)
+					(start -2.54 -15.24)
+					(mid -3.175 -14.605)
+					(end -2.54 -13.97)
 					(stroke
 						(width 0)
 						(type default)
@@ -1596,9 +1596,9 @@
 					)
 				)
 				(arc
-					(start 0 -16.51)
-					(mid -0.635 -15.875)
-					(end 0 -15.24)
+					(start -2.54 -16.51)
+					(mid -3.175 -15.875)
+					(end -2.54 -15.24)
 					(stroke
 						(width 0)
 						(type default)
@@ -1608,9 +1608,9 @@
 					)
 				)
 				(arc
-					(start 0 -17.78)
-					(mid -0.635 -17.145)
-					(end 0 -16.51)
+					(start -2.54 -17.78)
+					(mid -3.175 -17.145)
+					(end -2.54 -16.51)
 					(stroke
 						(width 0)
 						(type default)
@@ -1620,9 +1620,9 @@
 					)
 				)
 			)
-			(symbol "Ferrite_Antenna_tapped_1_1"
+			(symbol "Ferrite_antenna_tapped_1_1"
 				(pin passive line
-					(at 2.54 -2.54 180)
+					(at 0 -2.54 180)
 					(length 2.54)
 					(name "primary"
 						(effects
@@ -1640,7 +1640,7 @@
 					)
 				)
 				(pin passive line
-					(at 2.54 -12.7 180)
+					(at 0 -12.7 180)
 					(length 2.54)
 					(name "tap"
 						(effects
@@ -1658,7 +1658,7 @@
 					)
 				)
 				(pin passive line
-					(at 2.54 -17.78 180)
+					(at 0 -17.78 180)
 					(length 2.54)
 					(name "secondary"
 						(effects
@@ -2851,7 +2851,7 @@
 				(hide yes)
 			)
 		)
-		(property "Sim.Library" "/home/aidan/KiCad-Spice-Library/Models/uncategorized/spice_complete/AD6A.LIB"
+		(property "Sim.Library" "../spice_libraries/KiCad-Spice-Library/Models/uncategorized/spice_complete/AD6A.LIB"
 			(at 116.84 128.27 0)
 			(effects
 				(font
@@ -3634,6 +3634,77 @@
 		)
 	)
 	(symbol
+		(lib_id "antenna:Ferrite_antenna_tapped")
+		(at 41.91 69.85 0)
+		(unit 1)
+		(exclude_from_sim yes)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "49be2e40-184f-4872-a1f0-0c2776eef0b0")
+		(property "Reference" "U2"
+			(at 39.0525 68.58 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "~"
+			(at 39.0525 71.12 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 41.91 69.85 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 41.91 69.85 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 41.91 69.85 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "2"
+			(uuid "2bc148c0-2c49-4b89-a070-a766f2d2799d")
+		)
+		(pin "1"
+			(uuid "3ec65302-86d5-4ff7-82f1-81ce446db351")
+		)
+		(pin "3"
+			(uuid "0318e451-b4bd-4ceb-acc7-647901e99044")
+		)
+		(instances
+			(project ""
+				(path "/1f346c8c-1e51-4f75-85ee-2d30c45e3fc5/91368719-672a-4a05-ad25-dcc79ecf4ba6"
+					(reference "U2")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "power:GND")
 		(at 57.15 82.55 0)
 		(unit 1)
@@ -4298,77 +4369,6 @@
 			(project "ReceiverProto"
 				(path "/1f346c8c-1e51-4f75-85ee-2d30c45e3fc5/91368719-672a-4a05-ad25-dcc79ecf4ba6"
 					(reference "#PWR019")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "custom_lib:Ferrite_Antenna_tapped")
-		(at 39.37 69.85 0)
-		(unit 1)
-		(exclude_from_sim yes)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "7bae9a8e-9327-4789-b1ca-ba6ae81a24f6")
-		(property "Reference" "U2"
-			(at 39.0525 68.58 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "~"
-			(at 39.0525 71.12 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" ""
-			(at 39.37 69.85 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 39.37 69.85 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 39.37 69.85 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "2"
-			(uuid "b0b98d7c-74cd-4730-9b81-2e7af78631ac")
-		)
-		(pin "1"
-			(uuid "2700d0a1-0b9c-460c-b903-31fab16488b9")
-		)
-		(pin "3"
-			(uuid "e2d08b29-ea76-4e36-83c9-1ba421082644")
-		)
-		(instances
-			(project "ReceiverProto"
-				(path "/1f346c8c-1e51-4f75-85ee-2d30c45e3fc5/91368719-672a-4a05-ad25-dcc79ecf4ba6"
-					(reference "U2")
 					(unit 1)
 				)
 			)
@@ -6087,7 +6087,7 @@
 				(hide yes)
 			)
 		)
-		(property "Sim.Library" "spice/2N3904"
+		(property "Sim.Library" "/home/aidan/Avy-Dawgs/pcb/spice_libraries/misc/2N3904"
 			(at 138.43 68.58 0)
 			(effects
 				(font
