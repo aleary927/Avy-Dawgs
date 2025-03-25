@@ -1224,7 +1224,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "VSIN"
+		(property "Value" "AC 1"
 			(at 143.51 125.6001 0)
 			(effects
 				(font
