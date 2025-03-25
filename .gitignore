@@ -5,3 +5,10 @@
 **.lck
 **.wbk
 pcb/ReceiverProto_kicad/ReceiverProto-backups/**
+
+## exclusions for Vivado 
+**.xpr 
+**.runs/ 
+**.cache/ 
+**.jou 
+**.log
