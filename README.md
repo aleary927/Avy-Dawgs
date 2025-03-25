@@ -5,6 +5,7 @@ Design files for autonomous avalanche search drone project.
 * Aidan Leary
 * Hiram Perez
 * Dax Jennings
+* Noah Sikorski
 
 ## Repository Structure 
 This repository is organized into the following folders. 
