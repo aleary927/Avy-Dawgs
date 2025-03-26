@@ -5,7 +5,7 @@ module XADC_PmodDA2_top
   input vn, 
   input vp, 
   output led,
-  output [3:0] JA
+  output [3:0] ja
 ); 
 
 wire [15:0] di_in; 
@@ -33,16 +33,18 @@ assign vp_in = vp;
 assign vn_in = vn;
 assign den_in = eoc_out;
 assign daddr_in = {2'h00, channel_out};
+assign di_in = 'h0;
+assign dwe_in = 1'h0;
 
 assign da2_data = do_out[15:4];
 
 DA2RefComp refComp1 (
   .CLK(da2_clk), 
   .RST(rst), 
-  .D1(JA[1]), 
-  .D2(JA[2]), 
-  .CLK_OUT(JA[3]), 
-  .nSYNC(JA[0]), 
+  .D1(ja[1]), 
+  .D2(ja[2]), 
+  .CLK_OUT(ja[3]), 
+  .nSYNC(ja[0]), 
   .DATA1(da2_data), 
   .DATA2(da2_data), 
   .START(clk_div3), 

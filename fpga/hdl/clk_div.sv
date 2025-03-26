@@ -17,7 +17,7 @@ module clk_div
 
    reg [$clog2(MAX_COUNT) - 1:0] count;
 
-  always_ff @(posedge clk) begin 
+  always_ff @(posedge clk_ref) begin 
     if (rst) begin 
       count <= 'h0;
     end 
@@ -29,7 +29,7 @@ module clk_div
     end
   end
 
-  always_ff @(posedge clk) begin 
+  always_ff @(posedge clk_ref) begin 
     if (rst) begin 
       clk_out <= 1'h0;
     end
