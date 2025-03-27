@@ -10,13 +10,12 @@ module qsin_lut_2p
 (
   input clk, 
   input rst, 
-  input addr1, 
-  input addr2, 
+  input [ABITS-1:0] addr1, 
+  input [ABITS-1:0] addr2, 
   output reg [DW-1:0] data1, 
   output reg [DW-1:0] data2
 ); 
   localparam SIZE = 2**ABITS;
-  localparam PI = 3.1415926;
   
   reg [DW-1:0] rom [SIZE-1:0];
 
@@ -24,7 +23,7 @@ module qsin_lut_2p
   integer i;
   initial begin 
     for (i = 0; i < SIZE; i++) begin 
-      rom[i] = $signed(SCALE * $sin(2*PI*i/(SIZE*4)));
+      rom[i] = $signed(SCALE * $sin(2*3.1415926*i/(SIZE*4)));
     end
   end
 

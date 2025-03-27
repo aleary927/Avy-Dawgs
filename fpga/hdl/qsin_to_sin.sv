@@ -1,6 +1,6 @@
 /*
 * Converts a quadrant value and quarter sin LUT sample 
-* to a reguler sin value.
+* to a sin sample.
 */
 module qsin_to_sin 
 #(
@@ -17,8 +17,8 @@ module qsin_to_sin
       // positive 
       2'h0, 2'h1: sin_sample = qsin_sample;
       // negative 
-      2'h2, 2'h3: sin_sample = ~qsin_sample + 1'h1;
-      default: sin_sample = rom_data;
+      2'h2, 2'h3: sin_sample = (~qsin_sample) + 1'h1;
+      default: sin_sample = qsin_sample;
     endcase
   end
 
