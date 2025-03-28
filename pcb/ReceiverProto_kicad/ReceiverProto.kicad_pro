@@ -448,7 +448,8 @@
     "pinned_footprint_libs": [],
     "pinned_symbol_libs": [
       "antenna",
-      "Op-Amp"
+      "Op-Amp",
+      "ADC"
     ]
   },
   "meta": {
