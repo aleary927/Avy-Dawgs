@@ -1,9 +1,11 @@
 # exclusions for KiCAD project
 **.bak
 **.kicad_sch.bak
+**.kicad_sch-bak
 **.kicad_prl
 **.lck
 **.wbk
+**.raw
 pcb/ReceiverProto_kicad/ReceiverProto-backups/**
 
 ## exclusions for Vivado 
@@ -12,3 +14,4 @@ pcb/ReceiverProto_kicad/ReceiverProto-backups/**
 **.cache/ 
 **.jou 
 **.log
+fpga/XADC_DA2_vivado/**
