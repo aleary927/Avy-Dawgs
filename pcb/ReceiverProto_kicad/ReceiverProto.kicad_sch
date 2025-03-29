@@ -132,6 +132,48 @@
 		)
 	)
 	(sheet
+		(at 176.53 123.19)
+		(size 12.7 3.81)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "c69e4957-121d-4661-b403-121f1f0ee482")
+		(property "Sheetname" "io"
+			(at 176.53 122.4784 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "io.kicad_sch"
+			(at 176.53 127.5846 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "ReceiverProto"
+				(path "/1f346c8c-1e51-4f75-85ee-2d30c45e3fc5"
+					(page "6")
+				)
+			)
+		)
+	)
+	(sheet
 		(at 102.87 96.52)
 		(size 22.86 5.08)
 		(exclude_from_sim no)
