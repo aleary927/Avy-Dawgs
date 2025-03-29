@@ -7,6 +7,7 @@
 **.wbk
 **.raw
 pcb/ReceiverProto_kicad/ReceiverProto-backups/**
+pcb/ReceiverProto_kicad/fp-info-cache
 
 ## exclusions for Vivado 
 **.xpr 
