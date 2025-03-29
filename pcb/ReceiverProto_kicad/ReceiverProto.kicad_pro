@@ -449,7 +449,9 @@
     "pinned_symbol_libs": [
       "antenna",
       "Op-Amp",
-      "ADC"
+      "ADC",
+      "Voltate_Converter",
+      "LDO_Regulator"
     ]
   },
   "meta": {
@@ -635,6 +637,10 @@
     [
       "c7f50371-bbcf-4687-8cbf-078b775d205d",
       "simulation"
+    ],
+    [
+      "93d8b42a-fb95-4bca-8da9-6ca00464e9a7",
+      "power"
     ]
   ],
   "text_variables": {}

@@ -3,4 +3,6 @@
   (lib (name "antenna")(type "KiCad")(uri "${KIPRJMOD}/antenna.kicad_sym")(options "")(descr ""))
   (lib (name "Op-Amp")(type "KiCad")(uri "${KIPRJMOD}/Op-Amp.kicad_sym")(options "")(descr ""))
   (lib (name "ADC")(type "KiCad")(uri "${KIPRJMOD}/ADC.kicad_sym")(options "")(descr ""))
+  (lib (name "Voltate_Converter")(type "KiCad")(uri "${KIPRJMOD}/Voltate_Converter.kicad_sym")(options "")(descr ""))
+  (lib (name "LDO_Regulator")(type "KiCad")(uri "${KIPRJMOD}/LDO_Regulator.kicad_sym")(options "")(descr ""))
 )
