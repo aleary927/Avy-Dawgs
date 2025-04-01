@@ -16,3 +16,49 @@ pcb/ReceiverProto_kicad/fp-info-cache
 **.jou 
 **.log
 fpga/XADC_DA2_vivado/**
+
+## exclusions for ARM-MDK
+*.d 
+*.o 
+*.ko
+*.obj
+*.elf 
+*.ikl 
+*.map 
+*.exp 
+*.gch 
+*.pch 
+*.lib 
+*.a 
+*.la
+*.lo 
+*.dll
+*.so 
+*.so.*
+*.dylib 
+*.exe 
+*.out 
+*.app 
+*.i*86 
+*.x86_64 
+*.hex 
+*.dSYM
+*.su 
+*.idb 
+*.pdb 
+*.mod* 
+*.cmd 
+# .tmp_versions/
+# modules.order 
+# Module.symvers
+# Mkfile.old
+# dkms.conf
+.clangd
+uv2solution.log
+tmp 
+out
+*.cprj
+*.cbuild.yml
+*.cbuild-idx.yml 
+*.cbuild-set.yml
+*.cbuild-run.yml
