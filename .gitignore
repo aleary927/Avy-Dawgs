@@ -1,3 +1,6 @@
+# generic exclusions 
+settings.json
+
 # exclusions for KiCAD project
 **.bak
 **.kicad_sch.bak
