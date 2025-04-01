@@ -22,13 +22,14 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
+#include "dsp/transform_functions.h"
 #include "stm32_hal_legacy.h"
 #include "stm32f722xx.h"
 #include "stm32f7xx.h"
 #include "stm32f7xx_hal_dma_ex.h"
 #include "stm32f7xx_nucleo_144.h"
 #include <stm32f7xx_hal_dma.h>
-
+#include <arm_math.h>
 
 /* USER CODE END Includes */
 

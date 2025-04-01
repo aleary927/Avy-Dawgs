@@ -13,6 +13,7 @@ solution:
   packs:
     - pack: Keil::STM32F7xx_DFP
     - pack: ARM::CMSIS
+    - pack: ARM::CMSIS-DSP
 
   # List different hardware targets that are used to deploy the solution.
   target-types:

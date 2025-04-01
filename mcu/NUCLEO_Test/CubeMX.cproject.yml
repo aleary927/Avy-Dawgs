@@ -6,3 +6,4 @@ project:
   components:
     - component: ARM::CMSIS:CORE
     - component: Device:CubeMX
+    - component: ARM::CMSIS:DSP
