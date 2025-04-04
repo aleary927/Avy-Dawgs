@@ -10,6 +10,7 @@ set(BSP_DIR ${CMAKE_SOURCE_DIR}/../STM32CubeF7/Drivers/BSP/STM32F7xx_Nucleo_144)
 # STM32CubeMX generated symbols (macros)
 set(Defines_Syms 
 	USE_HAL_DRIVER 
+  USE_FULL_LL_DRIVER
 	STM32F722xx
     $<$<CONFIG:Debug>:DEBUG>
 )
