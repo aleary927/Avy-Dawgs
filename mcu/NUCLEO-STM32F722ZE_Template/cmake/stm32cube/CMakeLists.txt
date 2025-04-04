@@ -35,13 +35,24 @@ set(Include_Dirs
 # STM32 HAL/LL Drivers
 set(Drivers_Src
     ${HAL_DRIVER_DIR}/Src/stm32f7xx_hal.c
+    ${HAL_DRIVER_DIR}/Src/stm32f7xx_hal_cortex.c
     ${HAL_DRIVER_DIR}/Src/stm32f7xx_hal_gpio.c
     ${HAL_DRIVER_DIR}/Src/stm32f7xx_hal_uart.c
     ${HAL_DRIVER_DIR}/Src/stm32f7xx_hal_uart_ex.c
     ${HAL_DRIVER_DIR}/Src/stm32f7xx_hal_exti.c
     ${HAL_DRIVER_DIR}/Src/stm32f7xx_hal_rcc.c
+    ${HAL_DRIVER_DIR}/Src/stm32f7xx_hal_rcc_ex.c
+    ${HAL_DRIVER_DIR}/Src/stm32f7xx_hal_pcd.c
+    ${HAL_DRIVER_DIR}/Src/stm32f7xx_hal_pcd_ex.c
+    ${HAL_DRIVER_DIR}/Src/stm32f7xx_hal_pwr.c
+    ${HAL_DRIVER_DIR}/Src/stm32f7xx_hal_pwr_ex.c
+    ${HAL_DRIVER_DIR}/Src/stm32f7xx_hal_flash.c
+    ${HAL_DRIVER_DIR}/Src/stm32f7xx_hal_flash_ex.c
+    ${HAL_DRIVER_DIR}/Src/stm32f7xx_hal_i2c.c
+    ${HAL_DRIVER_DIR}/Src/stm32f7xx_hal_i2c_ex.c
     ${HAL_DRIVER_DIR}/Src/stm32f7xx_ll_dma.c
     ${HAL_DRIVER_DIR}/Src/stm32f7xx_ll_adc.c
+    ${HAL_DRIVER_DIR}/Src/stm32f7xx_ll_usb.c
     ${CMAKE_SOURCE_DIR}/Src/system_stm32f7xx.c
 )
 

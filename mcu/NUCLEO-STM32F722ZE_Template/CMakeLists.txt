@@ -23,11 +23,11 @@ set(CMAKE_PROJECT_NAME NUCLEO-STM32F722ZE_Template)
 
 # application source code
 set(Application_Src
-    ${CMAKE_SOURCE_DIR}/Core/Src/main.c
-    ${CMAKE_SOURCE_DIR}/Core/Src/stm32f7xx_it.c
-    ${CMAKE_SOURCE_DIR}/Core/Src/stm32f7xx_hal_msp.c
-    ${CMAKE_SOURCE_DIR}/Core/Src/sysmem.c
-    ${CMAKE_SOURCE_DIR}/Core/Src/syscalls.c
+    ${CMAKE_SOURCE_DIR}/Src/main.c
+    ${CMAKE_SOURCE_DIR}/Src/stm32f7xx_it.c
+    ${CMAKE_SOURCE_DIR}/Src/stm32f7xx_hal_msp.c
+    ${CMAKE_SOURCE_DIR}/Src/sysmem.c
+    ${CMAKE_SOURCE_DIR}/Src/syscalls.c
     ${CMAKE_SOURCE_DIR}/startup_stm32f722xx.s
 )
 
@@ -70,7 +70,7 @@ target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE
 
 # Add linked libraries
 target_link_libraries(${CMAKE_PROJECT_NAME}
-    stm32cubemx
+    stm32cube
 
     # Add user defined libraries
 )
