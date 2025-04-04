@@ -65,3 +65,13 @@ out
 *.cbuild-idx.yml 
 *.cbuild-set.yml
 *.cbuild-run.yml
+
+# exclusions for cmake
+compile_commands.json 
+.vscode/
+.cache/
+CMakeCache.txt
+CMakeFiles/
+build.ninja 
+cmake_install.cmake
+build/
