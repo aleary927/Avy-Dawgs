@@ -4,4 +4,6 @@
   (lib (name "OpAmp")(type "KiCad")(uri "${KIPRJMOD}/OpAmp.pretty")(options "")(descr ""))
   (lib (name "LDO_Regulator")(type "KiCad")(uri "${KIPRJMOD}/LDO_Regulator.pretty")(options "")(descr ""))
   (lib (name "Voltage_Converter")(type "KiCad")(uri "${KIPRJMOD}/Voltage_Converter.pretty")(options "")(descr ""))
+  (lib (name "SMD_SCHOTTKY_DIODE")(type "KiCad")(uri "${KIPRJMOD}/SMD_SCHOTTKY_DIODE.pretty")(options "")(descr ""))
+  (lib (name "SMD_Passives")(type "KiCad")(uri "${KIPRJMOD}/SMD_Passives.pretty")(options "")(descr ""))
 )

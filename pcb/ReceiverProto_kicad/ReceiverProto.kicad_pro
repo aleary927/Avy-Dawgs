@@ -449,7 +449,8 @@
       "adc",
       "OpAmp",
       "LDO_Regulator",
-      "Voltage_Converter"
+      "Voltage_Converter",
+      "SMD_SCHOTTKY_DIODE"
     ],
     "pinned_symbol_libs": [
       "antenna",
