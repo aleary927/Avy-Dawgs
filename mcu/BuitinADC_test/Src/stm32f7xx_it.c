@@ -23,7 +23,9 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "adc.h"
+#include "stm32f722xx.h"
 #include "stm32f7xx_ll_dma.h"
+#include "globals.h"
 #include "stm32f7xx_nucleo_144.h"
 /* USER CODE END Includes */
 
@@ -205,15 +207,21 @@ void SysTick_Handler(void)
 
 void DMA2_Stream0_IRQHandler(void)
 {
-  uint16_t tmp; 
-  tmp = buf1[1023];
   if (LL_DMA_IsActiveFlag_TC0(DMA2)) {
     LL_DMA_ClearFlag_TC0(DMA2);
-    HAL_GPIO_WritePin(GPIOB, LED1_PIN, GPIO_PIN_SET); 
+
+    // buf0 is ready when mem1 is new target
+    if (LL_DMA_GetCurrentTargetMem(DMA2, LL_DMA_STREAM_0) == LL_DMA_CURRENTTARGETMEM1) {
+      buf0_rdy = 1;
+    }
+    // otherwise buf1 is ready
+    else {
+      buf1_rdy = 1;
+    }
   }
+  // half transfer interrupt disabled now
   else if (LL_DMA_IsActiveFlag_HT0(DMA2)) {
     LL_DMA_ClearFlag_HT0(DMA2);
-    HAL_GPIO_WritePin(GPIOB, LED3_PIN, GPIO_PIN_SET); 
   }
   else {
     // error

@@ -29,9 +29,9 @@ set(Application_Src
     ${CMAKE_SOURCE_DIR}/Src/sysmem.c
     ${CMAKE_SOURCE_DIR}/Src/syscalls.c
     ${CMAKE_SOURCE_DIR}/startup_stm32f722xx.s
-    ${CMAKE_SOURCE_DIR}/Src/led.c
     ${CMAKE_SOURCE_DIR}/Src/app_main.c
     ${CMAKE_SOURCE_DIR}/Src/adc.c
+    ${CMAKE_SOURCE_DIR}/Src/dsp.c
 )
 
 # Include toolchain file
@@ -69,6 +69,7 @@ target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
 # Add project symbols (macros)
 target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user defined symbols
+    ARM_MATH_CM7
 )
 
 # Add linked libraries

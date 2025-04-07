@@ -2,11 +2,12 @@
 #include "adc.h"
 #include <stm32f7xx_ll_adc.h>
 #include <stm32f7xx_ll_dma.h>
+#include "globals.h"
 
+uint16_t buf0[BUF_SIZE]; 
 uint16_t buf1[BUF_SIZE]; 
-uint16_t buf2[BUF_SIZE]; 
 
-void ADC_StreamConfig(void) 
+void ADC_DMA_StreamConfig(void) 
 {
   // enable clocks
   __HAL_RCC_ADC1_CLK_ENABLE();
@@ -33,12 +34,12 @@ void ADC_StreamConfig(void)
   lldma_init.FIFOThreshold = LL_DMA_FIFOTHRESHOLD_1_2;
   lldma_init.PeriphOrM2MSrcAddress = LL_ADC_DMA_GetRegAddr(ADC1, LL_ADC_DMA_REG_REGULAR_DATA);
   lldma_init.PeriphOrM2MSrcIncMode = LL_DMA_PERIPH_NOINCREMENT;
-  lldma_init.MemoryOrM2MDstAddress = (uint32_t) buf1;
+  lldma_init.MemoryOrM2MDstAddress = (uint32_t) buf0;
   lldma_init.MemoryOrM2MDstIncMode = LL_DMA_MEMORY_INCREMENT;
   lldma_init.MemoryOrM2MDstDataSize = LL_DMA_MDATAALIGN_HALFWORD;
   lldma_init.PeriphOrM2MSrcDataSize = LL_DMA_PDATAALIGN_HALFWORD;
   LL_DMA_Init(DMA2, LL_DMA_STREAM_0, &lldma_init);  // initialize
-  LL_DMA_SetMemory1Address(DMA2, LL_DMA_STREAM_0, (uint32_t) buf2); // set address for second buffer
+  LL_DMA_SetMemory1Address(DMA2, LL_DMA_STREAM_0, (uint32_t) buf1); // set address for second buffer
   LL_DMA_EnableDoubleBufferMode(DMA2, LL_DMA_STREAM_0);   // enable double buffer mode
   LL_DMA_EnableIT_TC(DMA2, LL_DMA_STREAM_0);        // enable tranfer complete interrupt
   LL_DMA_EnableIT_HT(DMA2, LL_DMA_STREAM_0);
