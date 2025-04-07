@@ -4322,7 +4322,7 @@
 				)
 			)
 		)
-		(property "Footprint" "OpAmp:RJ_6_ADI"
+		(property "Footprint" ""
 			(at 63.5 135.89 0)
 			(effects
 				(font
@@ -5085,7 +5085,7 @@
 				)
 			)
 		)
-		(property "Footprint" "adc:CP-16-45_ADI"
+		(property "Footprint" "CP-16-45_ADI"
 			(at 165.1 128.27 0)
 			(effects
 				(font
@@ -5668,7 +5668,7 @@
 				)
 			)
 		)
-		(property "Footprint" "OpAmp:RJ_6_ADI"
+		(property "Footprint" ""
 			(at 63.5 91.44 0)
 			(effects
 				(font
@@ -6825,7 +6825,7 @@
 				)
 			)
 		)
-		(property "Footprint" "OpAmp:RJ_6_ADI"
+		(property "Footprint" ""
 			(at 63.5 182.88 0)
 			(effects
 				(font
@@ -7450,7 +7450,7 @@
 				)
 			)
 		)
-		(property "Footprint" "OpAmp:RJ_6_ADI"
+		(property "Footprint" ""
 			(at 63.5 44.45 0)
 			(effects
 				(font

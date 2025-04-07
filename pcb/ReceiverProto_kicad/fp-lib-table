@@ -1,9 +1,8 @@
 (fp_lib_table
   (version 7)
-  (lib (name "adc")(type "KiCad")(uri "${KIPRJMOD}/adc.pretty")(options "")(descr ""))
-  (lib (name "OpAmp")(type "KiCad")(uri "${KIPRJMOD}/OpAmp.pretty")(options "")(descr ""))
-  (lib (name "LDO_Regulator")(type "KiCad")(uri "${KIPRJMOD}/LDO_Regulator.pretty")(options "")(descr ""))
-  (lib (name "Voltage_Converter")(type "KiCad")(uri "${KIPRJMOD}/Voltage_Converter.pretty")(options "")(descr ""))
-  (lib (name "SMD_SCHOTTKY_DIODE")(type "KiCad")(uri "${KIPRJMOD}/SMD_SCHOTTKY_DIODE.pretty")(options "")(descr ""))
+  (lib (name "KiCADv6")(type "KiCad")(uri "/Users/hiramperez/Downloads/KiCADv6.pretty")(options "")(descr ""))
+  (lib (name "Library")(type "KiCad")(uri "${KIPRJMOD}/Library.pretty")(options "")(descr ""))
   (lib (name "SMD_Passives")(type "KiCad")(uri "${KIPRJMOD}/SMD_Passives.pretty")(options "")(descr ""))
+  (lib (name "SMD_SCHOTTKY_DIODE")(type "KiCad")(uri "${KIPRJMOD}/SMD_SCHOTTKY_DIODE.pretty")(options "")(descr ""))
+  (lib (name "Voltage_Regulator")(type "KiCad")(uri "${KIPRJMOD}/Voltage_Regulator.pretty")(options "")(descr ""))
 )
