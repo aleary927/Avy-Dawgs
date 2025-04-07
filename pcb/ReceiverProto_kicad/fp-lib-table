@@ -1,0 +1,7 @@
+(fp_lib_table
+  (version 7)
+  (lib (name "adc")(type "KiCad")(uri "${KIPRJMOD}/adc.pretty")(options "")(descr ""))
+  (lib (name "OpAmp")(type "KiCad")(uri "${KIPRJMOD}/OpAmp.pretty")(options "")(descr ""))
+  (lib (name "LDO_Regulator")(type "KiCad")(uri "${KIPRJMOD}/LDO_Regulator.pretty")(options "")(descr ""))
+  (lib (name "Voltage_Converter")(type "KiCad")(uri "${KIPRJMOD}/Voltage_Converter.pretty")(options "")(descr ""))
+)

@@ -445,7 +445,12 @@
     }
   },
   "libraries": {
-    "pinned_footprint_libs": [],
+    "pinned_footprint_libs": [
+      "adc",
+      "OpAmp",
+      "LDO_Regulator",
+      "Voltage_Converter"
+    ],
     "pinned_symbol_libs": [
       "antenna",
       "Op-Amp",
