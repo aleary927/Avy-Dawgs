@@ -32,8 +32,6 @@
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 
-#define ARM_MATH_CM7
-
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
