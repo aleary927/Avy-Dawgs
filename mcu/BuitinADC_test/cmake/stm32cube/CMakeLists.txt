@@ -12,6 +12,8 @@ set(Defines_Syms
 	USE_HAL_DRIVER 
   USE_FULL_LL_DRIVER
 	STM32F722xx
+  ARM_MATH_CM7
+  __FPU_PRESENT=1U
     $<$<CONFIG:Debug>:DEBUG>
 )
 
@@ -55,6 +57,16 @@ set(Drivers_Src
     ${HAL_DRIVER_DIR}/Src/stm32f7xx_ll_adc.c
     ${HAL_DRIVER_DIR}/Src/stm32f7xx_ll_usb.c
     ${CMAKE_SOURCE_DIR}/Src/system_stm32f7xx.c
+    ${CMSIS_DRIVER_DIR}/DSP/Source/TransformFunctions/arm_rfft_init_q15.c
+    ${CMSIS_DRIVER_DIR}/DSP/Source/TransformFunctions/arm_rfft_q15.c
+    ${CMSIS_DRIVER_DIR}/DSP/Source/TransformFunctions/arm_cfft_q15.c
+    ${CMSIS_DRIVER_DIR}/DSP/Source/TransformFunctions/arm_cfft_radix4_q15.c
+    ${CMSIS_DRIVER_DIR}/DSP/Source/TransformFunctions/arm_bitreversal.c
+    ${CMSIS_DRIVER_DIR}/DSP/Source/TransformFunctions/arm_bitreversal2.S
+    ${CMSIS_DRIVER_DIR}/DSP/Source/CommonTables/arm_const_structs.c
+    ${CMSIS_DRIVER_DIR}/DSP/Source/CommonTables/arm_common_tables.c
+    ${CMSIS_DRIVER_DIR}/DSP/Source/FastMathFunctions/arm_sin_f32.c
+    ${CMSIS_DRIVER_DIR}/DSP/Source/FastMathFunctions/arm_cos_f32.c
 )
 
 # Drivers Midllewares
