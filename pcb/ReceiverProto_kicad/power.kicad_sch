@@ -3157,7 +3157,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Voltage_Regulator:DBV5_TEX"
+		(property "Footprint" "Voltage_Regulator:DBV6"
 			(at 41.91 139.7 0)
 			(effects
 				(font
@@ -3441,7 +3441,7 @@
 				)
 			)
 		)
-		(property "Footprint" "UJ-5_ADI"
+		(property "Footprint" "LDO_Regulator:UJ-5_ADI"
 			(at 190.5 67.31 0)
 			(effects
 				(font
@@ -3928,7 +3928,7 @@
 				)
 			)
 		)
-		(property "Footprint" "R_8_ADI"
+		(property "Footprint" "Voltage_Converter:R_8_ADI"
 			(at 55.88 62.23 0)
 			(effects
 				(font

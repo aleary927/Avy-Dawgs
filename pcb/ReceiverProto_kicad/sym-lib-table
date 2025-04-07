@@ -5,5 +5,4 @@
   (lib (name "ADC")(type "KiCad")(uri "${KIPRJMOD}/ADC.kicad_sym")(options "")(descr ""))
   (lib (name "Voltate_Converter")(type "KiCad")(uri "${KIPRJMOD}/Voltate_Converter.kicad_sym")(options "")(descr ""))
   (lib (name "LDO_Regulator")(type "KiCad")(uri "${KIPRJMOD}/LDO_Regulator.kicad_sym")(options "")(descr ""))
-  (lib (name "TPS793")(type "KiCad")(uri "/Users/hiramperez/Downloads/KiCADv6/TPS793.kicad_sym")(options "")(descr ""))
 )
