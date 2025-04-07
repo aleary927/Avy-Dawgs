@@ -1,5 +1,6 @@
 # generic exclusions 
 settings.json
+.DS_Store
 
 # exclusions for KiCAD project
 **.bak
