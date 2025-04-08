@@ -27,6 +27,7 @@
 #include "stm32f7xx_ll_dma.h"
 #include "globals.h"
 #include "stm32f7xx_nucleo_144.h"
+#include <stdint.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -188,6 +189,17 @@ void PendSV_Handler(void)
 void SysTick_Handler(void)
 {
   /* USER CODE BEGIN SysTick_IRQn 0 */
+  static uint32_t count = 0;
+  count++; 
+  // init ADC burst every period
+  if (count == BURST_PERIOD_MS) {
+    count = 0;
+    // enable x stream
+    if (config_cplt) {
+      LL_DMA_EnableStream(DMA2, LL_DMA_STREAM_0);       // enable the stream
+      // TODO enable y stream
+    }
+  }
 
   /* USER CODE END SysTick_IRQn 0 */
   HAL_IncTick();
@@ -210,24 +222,19 @@ void DMA2_Stream0_IRQHandler(void)
   if (LL_DMA_IsActiveFlag_TC0(DMA2)) {
     LL_DMA_ClearFlag_TC0(DMA2);
 
-    // buf0 is ready when mem1 is new target
-    if (LL_DMA_GetCurrentTargetMem(DMA2, LL_DMA_STREAM_0) == LL_DMA_CURRENTTARGETMEM1) {
-      buf0_rdy = 1;
-    }
-    // otherwise buf1 is ready
-    else {
-      buf1_rdy = 1;
-    }
+    inbufx_rdy = 1;
+    // // buf0 is ready when mem1 is new target
+    // if (LL_DMA_GetCurrentTargetMem(DMA2, LL_DMA_STREAM_0) == LL_DMA_CURRENTTARGETMEM1) {
+    //   buf0_rdy = 1;
+    // }
+    // // otherwise buf1 is ready
+    // else {
+    //   buf1_rdy = 1;
+    // }
   }
   // half transfer interrupt disabled now
-  else if (LL_DMA_IsActiveFlag_HT0(DMA2)) {
+  if (LL_DMA_IsActiveFlag_HT0(DMA2)) {
     LL_DMA_ClearFlag_HT0(DMA2);
-  }
-  else {
-    // error
-    while (1) {
-
-    }
   }
 }
 

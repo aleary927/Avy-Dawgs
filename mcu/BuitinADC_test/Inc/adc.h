@@ -1,3 +1,3 @@
 #include "main.h"
 
-void ADC_DMA_StreamConfig(void);
+void ADC_DMA_Config(void);

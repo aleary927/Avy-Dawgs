@@ -9,17 +9,25 @@
 // input buffer data size
 #define BUF_SIZE 2048
 
+// time between bursts (in ms)
+#define BURST_PERIOD_MS 10
+
+// configuration complete flag
+extern int config_cplt;
+
 // input buffers
-extern uint16_t buf0[BUF_SIZE]; 
-extern uint16_t buf1[BUF_SIZE]; 
+extern uint16_t inbufx[BUF_SIZE]; 
+extern uint16_t inbufy[BUF_SIZE]; 
 // input buffer flags
-extern int buf0_rdy; 
-extern int buf1_rdy;
+extern int inbufx_rdy; 
+extern int inbufy_rdy;
 
 
 // goertzel buffer size
-#define NWINDOWS 10
+#define GOERTZEL_BUF_SIZE 10
 
-// goertzel buffer
-extern float32_t goertzelbuf[NWINDOWS];
-extern int32_t goertzelbuf_pos;
+// goertzel buffers
+extern float32_t goertzelbufx[GOERTZEL_BUF_SIZE];
+extern float32_t goertzelbufy[GOERTZEL_BUF_SIZE];
+extern uint32_t goertzelbufx_pos;
+extern uint32_t goertzelbufy_pos;

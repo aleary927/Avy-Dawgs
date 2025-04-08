@@ -10,55 +10,53 @@
 #include "globals.h"
 #include "dsp.h"
 
-float32_t goertzelbuf[NWINDOWS];
-int32_t goertzelbuf_pos = 0;
+float32_t goertzelbufx[GOERTZEL_BUF_SIZE];
+float32_t goertzelbufy[GOERTZEL_BUF_SIZE];
+uint32_t goertzelbufx_pos = 0;
+uint32_t goertzelbufy_pos = 0;
 
-int buf0_rdy; 
-int buf1_rdy;
+int inbufx_rdy = 0; 
+int inbufy_rdy = 0;
 
-void process(int16_t *buf);
+int config_cplt = 0;
+
+void process(int16_t *buf, float32_t *gbuf, uint32_t *gbuf_pos);
 
 void app_main(void)
 {
+  // enable caches
   SCB_EnableICache();
   SCB_EnableDCache();
-  LED_Init();
 
-  ADC_DMA_StreamConfig();
+  LED_Init();
+  ADC_DMA_Config();
   DWT_Init();
 
-  arm_rfft_instance_q15 S;
-  arm_rfft_init_q15(&S, BUF_SIZE, 0, 0);
+  // config is now complete
+  config_cplt = 1;
 
   while (1) {
     // poll for buffers ready
-    if (buf0_rdy) {
-      buf0_rdy = 0; 
-      // uint32_t cnt = HAL_GetTick();
-      uint32_t t1, t2; 
-      t1 = DWT_GetCount();
-      process((int16_t*) buf0);
-      // uint32_t newcnt = HAL_GetTick();
-      // uint32_t diff = newcnt - cnt;
-      t2 = DWT_GetCount() - t1;
-      t1 = 0;
+    if (inbufx_rdy) {
+      inbufx_rdy = 0; 
+      // uint32_t t1 = DWT_GetCount();
+      process((int16_t*) inbufx, goertzelbufx, &goertzelbufx_pos);
+      // uint32_t diff = DWT_GetCount() - t1;
+      // t1 = 0;
     }
-    if (buf1_rdy) {
-      buf1_rdy = 0; 
-      process((int16_t*) buf1);
+    if (inbufy_rdy) {
+      inbufy_rdy = 0; 
+      process((int16_t*) inbufy, goertzelbufy, &goertzelbufy_pos);
     }
 
-    // HAL_Delay(500);
     LED_Toggle(LED2_PIN);
   }
 }
 
 
 
-void process(int16_t *buf)
+void process(int16_t *buf, float32_t *gbuf, uint32_t *gbuf_pos)
 {
-  uint32_t t1, t2;  
-  t1 = DWT_GetCount();
   // subtract away dc op point
   for (int i = 0; i < BUF_SIZE; i+=4) {
     buf[i] -= 2048;
@@ -66,17 +64,15 @@ void process(int16_t *buf)
     buf[i+2] -= 2048;
     buf[i+3] -= 2048;
   }
-  t2 = DWT_GetCount();
-  uint32_t diff = t2 - t1;
 
   // calc power at 457 kHz
   float32_t gres = goertzel(buf);
 
   // save in buffer 
-  goertzelbuf[goertzelbuf_pos] = gres;
-  goertzelbuf_pos++; 
-  if (goertzelbuf_pos == NWINDOWS) {
-    goertzelbuf_pos = 0;
+  gbuf[*gbuf_pos] = gres;
+  (*gbuf_pos)++; 
+  if ((*gbuf_pos) == GOERTZEL_BUF_SIZE) {
+    *gbuf_pos = 0;
   }
 }
 
