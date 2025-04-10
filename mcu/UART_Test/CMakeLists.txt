@@ -29,6 +29,7 @@ set(Application_Src
     ${CMAKE_SOURCE_DIR}/Src/sysmem.c
     ${CMAKE_SOURCE_DIR}/Src/syscalls.c
     ${CMAKE_SOURCE_DIR}/startup_stm32f722xx.s
+    ${CMAKE_SOURCE_DIR}/Src/UART.c
 )
 
 # Include toolchain file
