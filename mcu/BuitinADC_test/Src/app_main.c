@@ -10,8 +10,8 @@
 #include "globals.h"
 #include "dsp.h"
 
-float32_t goertzelbufx[GOERTZEL_BUF_SIZE];
-float32_t goertzelbufy[GOERTZEL_BUF_SIZE];
+float goertzelbufx[GOERTZEL_BUF_SIZE];
+float goertzelbufy[GOERTZEL_BUF_SIZE];
 uint32_t goertzelbufx_pos = 0;
 uint32_t goertzelbufy_pos = 0;
 
@@ -20,7 +20,7 @@ int inbufy_rdy = 0;
 
 int config_cplt = 0;
 
-void process(int16_t *buf, float32_t *gbuf, uint32_t *gbuf_pos);
+void process(int16_t *buf, float *gbuf, uint32_t *gbuf_pos);
 
 void app_main(void)
 {
@@ -35,9 +35,19 @@ void app_main(void)
   // config is now complete
   config_cplt = 1;
 
+  int32_t sum_prev = 0;
+
   while (1) {
     // poll for buffers ready
     if (inbufx_rdy) {
+      int32_t sum = 0;
+      for (int i = 0; i < BUF_SIZE; i++) {
+        sum += inbufx[i];
+      }
+      if (sum == sum_prev) {
+        LED_Toggle(LED3_PIN);
+      }
+      sum_prev = sum;
       inbufx_rdy = 0; 
       // uint32_t t1 = DWT_GetCount();
       process((int16_t*) inbufx, goertzelbufx, &goertzelbufx_pos);
@@ -54,8 +64,7 @@ void app_main(void)
 }
 
 
-
-void process(int16_t *buf, float32_t *gbuf, uint32_t *gbuf_pos)
+void process(int16_t *buf, float *gbuf, uint32_t *gbuf_pos)
 {
   // subtract away dc op point
   for (int i = 0; i < BUF_SIZE; i+=4) {
@@ -66,7 +75,7 @@ void process(int16_t *buf, float32_t *gbuf, uint32_t *gbuf_pos)
   }
 
   // calc power at 457 kHz
-  float32_t gres = goertzel(buf);
+  float gres = goertzel_power(buf);
 
   // save in buffer 
   gbuf[*gbuf_pos] = gres;
@@ -74,5 +83,11 @@ void process(int16_t *buf, float32_t *gbuf, uint32_t *gbuf_pos)
   if ((*gbuf_pos) == GOERTZEL_BUF_SIZE) {
     *gbuf_pos = 0;
   }
-}
 
+  float gsum;
+  for (int i = 0; i < GOERTZEL_BUF_SIZE; i++) {
+    gsum += gbuf[i];
+  }
+
+  float avg = gsum / GOERTZEL_BUF_SIZE;
+}
