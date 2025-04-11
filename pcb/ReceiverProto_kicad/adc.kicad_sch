@@ -2812,7 +2812,7 @@
 		)
 		(uuid "6e97c233-a297-42d0-bc7e-311c86466152")
 	)
-	(label "Vref"
+	(label "VREF"
 		(at 78.74 22.86 0)
 		(effects
 			(font
@@ -2842,7 +2842,7 @@
 		)
 		(uuid "8d33ebca-f828-4fc6-a909-7caa6956c2a8")
 	)
-	(label "Vref"
+	(label "VREF"
 		(at 78.74 162.56 0)
 		(effects
 			(font
@@ -2872,7 +2872,7 @@
 		)
 		(uuid "a6d1bff1-dd57-466f-ba77-81783e8eafb6")
 	)
-	(label "Vref"
+	(label "VREF"
 		(at 78.74 116.84 0)
 		(effects
 			(font
@@ -2922,7 +2922,7 @@
 		)
 		(uuid "daa8697c-57c4-415e-aa1f-ed81d82c9be9")
 	)
-	(label "Vref"
+	(label "VREF"
 		(at 78.74 71.12 0)
 		(effects
 			(font
