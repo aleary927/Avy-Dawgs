@@ -745,16 +745,6 @@
 		)
 		(uuid "93a4f8ce-1d21-4b97-b5e0-68ef18413874")
 	)
-	(wire
-		(pts
-			(xy 165.1 91.44) (xy 170.18 91.44)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "7c6f85ef-155d-46d3-9ebf-bb9e03e7bb18")
-	)
 	(global_label "SIM_Vin"
 		(shape input)
 		(at 139.7 120.65 0)
