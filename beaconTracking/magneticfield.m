@@ -46,7 +46,7 @@ quiver(x, y, Bx_field ./ sqrt(Bx_field.^2 + By_field.^2), ...
 drone_plot = plot(drone_pos(1), drone_pos(2), 'ro', 'MarkerSize', 8, 'MarkerFaceColor', 'r');
 plot(0, 0, 'bo', 'MarkerSize', 10, 'LineWidth', 2);
 axis equal;
-title('Drone Path (Smoothed, Stable)');
+title('Drone Path (With Noise Added)');
 xlabel('X (m)'); ylabel('Y (m)');
 
 heading_plot = quiver(drone_pos(1), drone_pos(2), heading(1), heading(2), ...
