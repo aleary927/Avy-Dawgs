@@ -10,7 +10,7 @@
 #define BUF_SIZE 2048
 
 // time between bursts (in ms)
-#define BURST_PERIOD_MS 10
+#define BURST_PERIOD_MS 5
 
 // configuration complete flag
 extern int config_cplt;
