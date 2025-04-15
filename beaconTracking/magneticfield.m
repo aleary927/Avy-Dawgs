@@ -1,18 +1,21 @@
 % === Constants ===
-mu0 = 4 * pi * 1e-7;
-m = 1e-2;
-range = 40;
-res = 1;
+mu0 = 4 * pi * 1e-7; % Permiability of free space H/m
+m = 1e-2; % Magnetic Moment needs to be adjusted to real beacon value
+range = 40; % Size of grid
+res = 1; % Resolution of grid
 
+% === Setup Grid ===
 [x, y] = meshgrid(-range:res:range, -range:res:range);
 r = sqrt(x.^2 + y.^2); r(r == 0) = eps;
 theta = atan2(y, x);
 
-Br = mu0 * m ./ (4 * pi * r.^3) .* (2 * cos(theta));
-Bt = mu0 * m ./ (4 * pi * r.^3) .* (sin(theta));
+% === Field Calculations ===
+Br = mu0 * m ./ (4 * pi * r.^3) .* (2 * cos(theta)); % Radial Portion
+Bt = mu0 * m ./ (4 * pi * r.^3) .* (sin(theta)); % Tangential Portion
 
-Bx_field = Br .* cos(theta) - Bt .* sin(theta);
-By_field = Br .* sin(theta) + Bt .* cos(theta);
+% === Convert to X, Y Coordinates ===
+Bx_field = Br .* cos(theta) - Bt .* sin(theta); % Convert X values
+By_field = Br .* sin(theta) + Bt .* cos(theta); % Convert Y Value
 
 % === Random Drone Start ===
 while true
@@ -23,17 +26,18 @@ while true
 end
 
 % === Initial Setup ===
-heading = rand(1,2); heading = heading / norm(heading);
+heading = rand(1,2);
+heading = heading / norm(heading);
 path = drone_pos;
 last_B_mag = 0;
-sniff_interval = 4;
+sniff_interval = 10;
 steps_since_sniff = 0;
 last_full_sniff_step = -Inf;
 
 % === Logs ===
 B_mag_log = [];
-B_parallel_log = [];
-B_perp_log = [];
+B_parallel_log = []; % Parallel Antenna
+B_perp_log = []; % Perpendicular Antenna
 step_log = [];
 pos_log = drone_pos;
 
@@ -41,16 +45,14 @@ pos_log = drone_pos;
 figure('Position',[50 50 1400 500]);
 
 subplot(1,2,1);
-quiver(x, y, Bx_field ./ sqrt(Bx_field.^2 + By_field.^2), ...
-    By_field ./ sqrt(Bx_field.^2 + By_field.^2), 0.5, 'k'); hold on;
+quiver(x, y, Bx_field ./ sqrt(Bx_field.^2 + By_field.^2), By_field ./ sqrt(Bx_field.^2 + By_field.^2), 0.5, 'k'); hold on;
 drone_plot = plot(drone_pos(1), drone_pos(2), 'ro', 'MarkerSize', 8, 'MarkerFaceColor', 'r');
 plot(0, 0, 'bo', 'MarkerSize', 10, 'LineWidth', 2);
 axis equal;
-title('Drone Path (With Noise Added)');
+title('Drone Path (With Added Noise)');
 xlabel('X (m)'); ylabel('Y (m)');
 
-heading_plot = quiver(drone_pos(1), drone_pos(2), heading(1), heading(2), ...
-    1.5, 'Color', [0.2 0.6 1], 'LineWidth', 2);
+heading_plot = quiver(drone_pos(1), drone_pos(2), heading(1), heading(2), 1.5, 'Color', [0.2 0.6 1], 'LineWidth', 2);
 
 subplot(1,2,2); hold on;
 h_mag = plot(NaN, NaN, '-k', 'LineWidth', 2);
@@ -126,8 +128,7 @@ for step = 1:1000
 
             subplot(1,2,1);
             set(drone_plot, 'XData', drone_pos(1), 'YData', drone_pos(2));
-            set(heading_plot, 'XData', drone_pos(1), 'YData', drone_pos(2), ...
-                'UData', heading(1), 'VData', heading(2));
+            set(heading_plot, 'XData', drone_pos(1), 'YData', drone_pos(2), 'UData', heading(1), 'VData', heading(2));
             plot([current_pos(1), drone_pos(1)], [current_pos(2), drone_pos(2)], 'Color', [0.6 0.6 0.6]);
 
             drawnow;
