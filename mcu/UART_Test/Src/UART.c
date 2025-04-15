@@ -1,8 +1,11 @@
 #include "main.h"
 #include "stm32f722xx.h"
+#include "stm32f7xx_hal_gpio_ex.h"
+#include "stm32f7xx_hal_rcc_ex.h"
 #include <stm32f7xx_ll_usart.h>
 #include <stm32f7xx_ll_gpio.h>
 #include <stm32f7xx_ll_bus.h>
+#include <stm32f7xx_hal_gpio.h>
 
 #define UART USART2
 
@@ -36,6 +39,18 @@ void UART_Test(void){
 
 // Uart config function
 void UART_Config(USART_TypeDef *USARTx){
+
+  __HAL_RCC_USART2_CLK_ENABLE(); 
+  __HAL_RCC_GPIOD_CLK_ENABLE(); 
+    
+    GPIO_InitTypeDef gpio_init; 
+    gpio_init.Pin = GPIO_PIN_5; 
+    gpio_init.Mode = GPIO_MODE_AF_OD; 
+    gpio_init.Pull = GPIO_NOPULL; 
+    gpio_init.Speed = GPIO_SPEED_FREQ_HIGH; 
+    gpio_init.Alternate = GPIO_AF7_USART2;
+    HAL_GPIO_Init(GPIOD, &gpio_init);
+
     LL_USART_InitTypeDef usart_init; 
     usart_init.BaudRate = 115200;
     usart_init.DataWidth = LL_USART_DATAWIDTH_8B;
@@ -89,3 +104,4 @@ void USART2_IRQHandler(void){
         }
     }
 }
+
