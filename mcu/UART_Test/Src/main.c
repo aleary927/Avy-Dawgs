@@ -96,6 +96,8 @@ int main(void)
   MX_USB_OTG_FS_PCD_Init();
   /* USER CODE BEGIN 2 */
 
+  UART_Test();
+
   /* USER CODE END 2 */
 
   /* Infinite loop */

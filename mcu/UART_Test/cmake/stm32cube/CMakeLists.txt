@@ -54,6 +54,8 @@ set(Drivers_Src
     ${HAL_DRIVER_DIR}/Src/stm32f7xx_ll_dma.c
     ${HAL_DRIVER_DIR}/Src/stm32f7xx_ll_adc.c
     ${HAL_DRIVER_DIR}/Src/stm32f7xx_ll_usb.c
+    ${HAL_DRIVER_DIR}/Src/stm32f7xx_ll_rcc.c
+    ${HAL_DRIVER_DIR}/Src/stm32f7xx_ll_usart.c
     ${CMAKE_SOURCE_DIR}/Src/system_stm32f7xx.c
 )
 
