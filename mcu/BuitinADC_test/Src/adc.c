@@ -6,8 +6,8 @@
 #include "stm32f722xx.h"
 #include "stm32f7xx_hal_rcc_ex.h"
 
-int16_t inbufx[BUF_SIZE]; 
-int16_t inbufy[BUF_SIZE]; 
+volatile int16_t inbufx[BUF_SIZE]; 
+volatile int16_t inbufy[BUF_SIZE]; 
 
 
 static void ADCx_DMAx_StreamConfig(ADC_TypeDef *ADCx, 

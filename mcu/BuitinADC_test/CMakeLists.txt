@@ -32,6 +32,7 @@ set(Application_Src
     ${CMAKE_SOURCE_DIR}/Src/app_main.c
     ${CMAKE_SOURCE_DIR}/Src/adc.c
     ${CMAKE_SOURCE_DIR}/Src/dsp.c
+    ${CMAKE_SOURCE_DIR}/Src/UART.c
 )
 
 # Include toolchain file

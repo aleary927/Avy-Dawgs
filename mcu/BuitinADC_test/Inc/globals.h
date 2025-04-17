@@ -13,14 +13,14 @@
 #define BURST_PERIOD_MS 5
 
 // configuration complete flag
-extern int config_cplt;
+extern volatile int config_cplt;
 
 // input buffers
-extern int16_t inbufx[BUF_SIZE]; 
-extern int16_t inbufy[BUF_SIZE]; 
+extern volatile int16_t inbufx[BUF_SIZE]; 
+extern volatile int16_t inbufy[BUF_SIZE]; 
 // input buffer flags
-extern int inbufx_rdy; 
-extern int inbufy_rdy;
+extern volatile int inbufx_rdy; 
+extern volatile int inbufy_rdy;
 
 
 // goertzel buffer size
