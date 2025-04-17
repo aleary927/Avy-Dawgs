@@ -64,7 +64,7 @@ xlabel('Step'); ylabel('Signal Strength');
 
 % === Motion Parameters ===
 step_size = 0.6;
-fov_half_angle = pi/8;
+fov_half_angle = pi/4;
 stop_threshold_B_mag = 0.3;
 drop_threshold = 0.05;
 signal_window = 3;
@@ -97,10 +97,10 @@ for step = 1:1000
         candidate_scores = [];
 
         if do_full_sniff
-            scan_angles = linspace(0, 2*pi, 8);
+            scan_angles = linspace(0, 2*pi, 12);
             last_full_sniff_step = step;
         else
-            scan_angles = linspace(-fov_half_angle, fov_half_angle, 3);
+            scan_angles = linspace(-fov_half_angle, fov_half_angle, 5);
             current_angle = atan2(heading(2), heading(1));
             scan_angles = mod(current_angle + scan_angles, 2*pi);
         end
