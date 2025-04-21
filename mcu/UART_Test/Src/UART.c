@@ -2,13 +2,13 @@
 #include "stm32f722xx.h"
 #include "stm32f7xx_hal_cortex.h"
 #include "stm32f7xx_hal_gpio_ex.h"
-#include "stm32f7xx_hal_rcc.h"
 #include "stm32f7xx_hal_rcc_ex.h"
 #include <stm32f7xx_ll_usart.h>
 #include <stm32f7xx_ll_gpio.h>
 #include <stm32f7xx_ll_bus.h>
 #include <stm32f7xx_ll_rcc.h>
 #include <stm32f7xx_hal_gpio.h>
+#include "UART.h"
 
 #define UART USART6
 
@@ -17,10 +17,7 @@ volatile uint8_t *tx_buffer = NULL;
 volatile uint32_t tx_len = 0;
 volatile uint32_t tx_index = 0;
 
-void UART_Config(USART_TypeDef *USARTx);
-int UART_Transmit(const char *data);
 uint32_t strlen(const char *s);
-// void USART2_IRQHandler(void);
 
 // global flag (for interrupt based) to say whether transmit is in progress
 // function to check if transmit is in progress

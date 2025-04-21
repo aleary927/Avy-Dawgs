@@ -10,7 +10,6 @@
 #include "dsp.h"
 #include "constants.h"
 #include "UART.h"
-#include <math.h>
 #include <stdio.h>
 
 float goertzelbufx[GOERTZEL_BUF_SIZE];
@@ -28,8 +27,6 @@ float max_power_x;
 
 char uart_buf[100];
 
-int count; 
-
 void power_calc(int16_t *buf, float *gbuf, uint32_t *gbuf_pos);
 
 void app_main(void)
@@ -43,8 +40,6 @@ void app_main(void)
   ADC_DMA_Config();
   DWT_Init();
   UART_Config();
-
-  count = 0;
 
   // config is now complete
   config_cplt = 1;
@@ -99,17 +94,11 @@ void app_main(void)
       }
       max_power_x = new_max_x;
       max_power_y = new_max_y;
-
-
-      count++; 
-      if (count == 5 && !tx_in_progress) {
-        snprintf(uart_buf, 99, "max x: %d     max y: %d\n\r\0", (int) max_power_x, (int) max_power_y);
-        UART_Transmit(uart_buf);
-        count = 0;
-      }
     }
 
+    sprintf(uart_buf, "test");
 
+    
     LED_Toggle(LED2_PIN);
   }
 }
@@ -126,7 +115,7 @@ void power_calc(int16_t *buf, float *gbuf, uint32_t *gbuf_pos)
   }
 
   // calc power at 457 kHz
-  float power = 20 * log10(goertzel_power(buf));
+  float power = goertzel_power(buf);
 
   // save in buffer 
   gbuf[*gbuf_pos] = power;
