@@ -31,14 +31,16 @@ typedef struct
 /**
  * Update guidance state and return a new direction suggestion.
  *
- * @param Bpar_db   signed parallel reading (dB or linear units)
- * @param Bperp_db  signed perpendicular reading
- * @param st        pointer to persistent GuidanceState (must be initialized)
- * @param p         pointer to GuidanceParams
- * @return          one of STRAIGHT_AHEAD, TURN_LEFT, TURN_RIGHT, TURN_AROUND
+ * @param gbufx       pointer to X-axis Goertzel power buffer
+ * @param gbufy       pointer to Y-axis Goertzel power buffer
+ * @param posx        next write index into gbufx
+ * @param posy        next write index into gbufy
+ * @param st          pointer to persistent GuidanceState (init before use)
+ * @param p           pointer to GuidanceParams
+ * @return            one of STRAIGHT_AHEAD, TURN_LEFT, TURN_RIGHT, TURN_AROUND
  */
 
-Direction guidance_step(const float *gbuffx, const float *gbuffy, unit32_t posx, unit32_t posy GuidanceState *st, const GuidanceParams *p)
+Direction guidance_step(const float *gbuffx, const float *gbuffy, unit32_t posx, unit32_t posy, GuidanceState *st, const GuidanceParams *p)
 {
 
     // 1) pull out the last sample from each buffer
