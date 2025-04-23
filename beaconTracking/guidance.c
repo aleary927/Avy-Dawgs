@@ -31,8 +31,8 @@ typedef struct
 /**
  * Update guidance state and return a new direction suggestion.
  *
- * @param Bpar_db   signed “parallel” reading (dB or linear units)
- * @param Bperp_db  signed “perpendicular” reading
+ * @param Bpar_db   signed parallel reading (dB or linear units)
+ * @param Bperp_db  signed perpendicular reading
  * @param st        pointer to persistent GuidanceState (must be initialized)
  * @param p         pointer to GuidanceParams
  * @return          one of STRAIGHT_AHEAD, TURN_LEFT, TURN_RIGHT, TURN_AROUND
