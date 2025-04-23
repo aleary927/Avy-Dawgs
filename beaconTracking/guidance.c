@@ -19,6 +19,7 @@ typedef struct
     int    rev_drops;     // how many consecutive drops seen in reverse mode
     bool   reverse_lock;  // true if in reverse mode
     int    cd_timer;      // ticks remaining before we can switch modes again
+    Direction last_dir;     // remember what we told them last
 } GuidanceState;
 
 // Tunable parameters for how sensitive and how often we reverse
@@ -28,12 +29,14 @@ typedef struct
     int      drop_steps;  // how many drops in a row to trigger a mode change
     int      reverse_cd;  // cooldown duration (in measurements) after switching modes
     float    fwd_thresh;  // maximum angular offset (radians) to still call straight
+    float    min_valid_mag; // ignore any mag below this
 } GuidanceParams;
 
 
 /**
  * Examine the latest two antenna power readings, update our internal state,
- * and suggest which way to head next.
+ * and suggest which way to head next. Only use samples stronger than min_valid_mag. 
+ * If we see a weak sample, just re-issue the last direction.
  *
  * @param gbufx       pointer to the circular buffer of X-axis (parallel) power values
  * @param gbufy       pointer to the circular buffer of Y-axis (perpendicular) power values
@@ -47,19 +50,25 @@ typedef struct
 Direction guidance_step(const float *gbufx, const float *gbufy, uint32_t posx, uint32_t posy, GuidanceState *st, const GuidanceParams *p)
 {
     // 1) Fetch most recent sample from each buffer
-    uint32_t idx_x   = (posx == 0) ? (p->buf_size - 1) : (posx - 1);
-    uint32_t idx_y   = (posy == 0) ? (p->buf_size - 1) : (posy - 1);
-    float    Bpar_db = gbufx[idx_x]; // parallel-component power (in dB)
-    float    Bperp_db= gbufy[idx_y]; // perpendicular-component power (in dB)
+    uint32_t ix = posx ? posx - 1 : p->buf_size - 1;
+    uint32_t iy = posy ? posy - 1 : p->buf_size - 1;
+    float Bpar_db  = gbufx[ix];
+    float Bperp_db = gbufy[iy];
 
     // 2) overall magnitude
     float mag = sqrtf(Bpar_db * Bpar_db + Bperp_db * Bperp_db);
 
-    // 3) drop detection
+    // 3) if it's too weak, ignore it and repeat last direction
+    if (mag < p->min_valid_mag) 
+    {
+        return st->last_dir;
+    }
+
+    // 4) drop detection
     bool drop = (mag < st->last_mag);
     st->last_mag = mag; // update for next time
 
-    // 4) cooldown first, then mode logic
+    // 5) cooldown first, then mode logic
     if (st->cd_timer > 0) 
     {
         st->cd_timer--; // Still cooling down from last switch; just decrement timer
@@ -88,26 +97,34 @@ Direction guidance_step(const float *gbufx, const float *gbufy, uint32_t posx, u
         }
     }
 
-    // 5) If in reverse mode, flip the sign of both components
+    // 6) If in reverse mode, flip the sign of both components
     float Bpar  = st->reverse_lock ? -Bpar_db  : Bpar_db;
     float Bperp = st->reverse_lock ? -Bperp_db : Bperp_db;
 
-    // 6) Translate vector into a discrete direction command
+    // 7) Translate vector into a discrete direction command
+    Direction dir;
     if (Bpar < 0.0f) 
     {
-        return TURN_AROUND; // If the parallel component points backwards, do a full turn around
+        dir = TURN_AROUND; // If the parallel component points backwards, do a full turn around
     }
-    float ang = atan2f(Bperp, Bpar); // Compute the deviation angle from straight ahead
-    if (fabsf(ang) <= p->fwd_thresh) // If within the straight-ahead threshold, keep going
+    else
     {
-        return STRAIGHT_AHEAD;
-    } 
-    else if (ang > 0.0f) // Otherwise, choose left or right based on the sign of the angle
-    {
-        return TURN_LEFT;
-    } 
-    else 
-    {
-        return TURN_RIGHT;
+        float ang = atan2f(Bperp, Bpar); // Compute the deviation angle from straight ahead
+        if (fabsf(ang) <= p->fwd_thresh) // If within the straight-ahead threshold, keep going
+        {
+            dir = STRAIGHT_AHEAD;
+        } 
+        else if (ang > 0.0f) // Otherwise, choose left or right based on the sign of the angle
+        {
+            dir = TURN_LEFT;
+        } 
+        else 
+        {
+            dir = TURN_RIGHT;
+        }
     }
+
+    // 8) remember and return
+    st->last_dir = dir;
+    return dir;
 }
