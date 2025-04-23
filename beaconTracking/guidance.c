@@ -32,6 +32,15 @@ typedef struct
     float    min_valid_mag; // ignore any mag below this
 } GuidanceParams;
 
+static inline void guidance_state_init (GuidanceState *st, const GuidanceParams *p)
+{
+    st -> last_dir = STRAIGHT_AHEAD;
+    st -> last_mag = p->min_valid_mag;
+    st -> fwd_drops = 0;
+    st -> rev_drops = 0;
+    st -> reverse_lock = false;
+    st -> cd_timer = 0;
+}
 
 /**
  * Examine the latest two antenna power readings, update our internal state,
@@ -81,8 +90,8 @@ Direction guidance_step(const float *gbufx, const float *gbufy, uint32_t posx, u
             if (st->fwd_drops >= p->drop_steps) 
             {
                 st->reverse_lock = true; // enter reverse mode
-                st->fwd_drops    = 0; // reset counter
-                st->cd_timer     = p->reverse_cd; // start cooldown
+                st->fwd_drops = 0; // reset counter
+                st->cd_timer = p->reverse_cd; // start cooldown
             }
         } 
         else 
@@ -91,8 +100,8 @@ Direction guidance_step(const float *gbufx, const float *gbufy, uint32_t posx, u
             if (st->rev_drops >= p->drop_steps) 
             {
                 st->reverse_lock = false; // back to forward mode
-                st->rev_drops    = 0; // reset counter
-                st->cd_timer = p->reverse_cd // start cooldown
+                st->rev_drops = 0; // reset counter
+                st->cd_timer = p->reverse_cd; // start cooldown
             }
         }
     }
