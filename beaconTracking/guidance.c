@@ -3,6 +3,7 @@
 
 // --- possible return values for suggested heading ---
 typedef enum 
+{
     STRAIGHT_AHEAD,
     TURN_LEFT,
     TURN_RIGHT,
