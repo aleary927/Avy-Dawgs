@@ -1,7 +1,6 @@
 % handheld_guidance.m
 % Simulate a handheld receiver guiding a person to a beacon.
 % All signal‐processing and decision logic live in the helper function.
-% Plots are configured so XData/YData vector sizes always match.
 
 %% === Constants and Grid Setup ===
 mu0    = 4*pi*1e-7;           % Permeability of free space (H/m)
