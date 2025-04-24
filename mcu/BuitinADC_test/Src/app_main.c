@@ -168,8 +168,8 @@ void power_calc(int16_t *buf, circ_buf_float *pbuf)
 {
   // subtract away dc op point and apply window
   for (int i = 0; i < BUF_SIZE; i+=2) {
-    int32_t intres0 = (buf[i] - 2048) * flattop_int16_2048[i];
-    int32_t intres1 = (buf[i+1] - 2048) * flattop_int16_2048[i+1];
+    int32_t intres0 = (buf[i] - 2048) * flattop_int16_3600[i];
+    int32_t intres1 = (buf[i+1] - 2048) * flattop_int16_3600[i+1];
 
     // shift back into 16 bit range
     buf[i] = intres0 >> 12;
@@ -178,13 +178,13 @@ void power_calc(int16_t *buf, circ_buf_float *pbuf)
 
   // calc power at 457 kHz
   float power = goertzel_power_457k(buf);
-  // clamp to 1 (to avoid negative power)
+  // clamp to 1 (to avoid negative power dB readings)
   if (power < 1) {
     power = 1;
   }
 
   // convert power to dB
-  float power_db = 20 * log10f(power);
+  float power_db = 10 * log10f(power);
 
   // save in buffer 
   circ_buf_wr_float(pbuf, power_db);
@@ -197,6 +197,7 @@ void avg_power(float *pbuf, circ_buf_float *avg_pbuf)
 {
   // calc average of power buffer
   float sum = 0;
+
   for (int i = 0; i < POWER_BUF_SIZE; i++) {
     sum += pbuf[i];
   }

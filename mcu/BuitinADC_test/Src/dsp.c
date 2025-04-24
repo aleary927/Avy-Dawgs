@@ -12,7 +12,8 @@ float goertzel_power_457k(int16_t *data)
 {
   const float scaling_factor = ((float) BUF_SIZE) / 2.0;
   const float target_freq = 457000.0;
-  const float sampling_rate = 1800000.0;
+  // const float sampling_rate = 1800000.0;
+  const float sampling_rate = 3600000.0;
   const int32_t k = (int32_t) (0.5 + ((((float) BUF_SIZE) * target_freq) / sampling_rate));
   const float omega = (2.0 * 3.1415926 * k) / ((float) BUF_SIZE);
 
