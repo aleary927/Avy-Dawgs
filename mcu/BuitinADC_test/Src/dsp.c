@@ -3,7 +3,12 @@
 #include <arm_math.h>
 
 // https://github.com/Harvie/Programs/blob/master/c/goertzel/goertzel.c
-float goertzel_power(int16_t *data)
+/*
+* Calculate the power at 457 kHz of input buffer.
+*
+* Input buffer should be size defined by BUF_SIZE.
+*/
+float goertzel_power_457k(int16_t *data)
 {
   const float scaling_factor = ((float) BUF_SIZE) / 2.0;
   const float target_freq = 457000.0;

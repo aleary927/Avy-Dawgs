@@ -23,11 +23,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "adc.h"
-#include "stm32f722xx.h"
-#include "stm32f7xx_ll_adc.h"
-#include "stm32f7xx_ll_dma.h"
 #include "globals.h"
-#include "stm32f7xx_nucleo_144.h"
 #include <stdint.h>
 /* USER CODE END Includes */
 
@@ -189,53 +185,9 @@ void PendSV_Handler(void)
   */
 void SysTick_Handler(void)
 {
-  /* USER CODE BEGIN SysTick_IRQn 0 */
-  static uint32_t count = 0;
-  count++; 
-  // init ADC burst every period
-  if (count == BURST_PERIOD_MS) {
-    count = 0;
-    // make sure configuration is complete
-    if (config_cplt) {
-      // it is necessary to invalidate cache here so that changes in cache are not written 
-      // through at a later time
-      SCB_InvalidateDCache_by_Addr((uint32_t*)(((uint32_t)inbufx) & ~(uint32_t)0x1F), BUF_SIZE*2+32);
-      SCB_InvalidateDCache_by_Addr((uint32_t*)(((uint32_t)inbufy) & ~(uint32_t)0x1F), BUF_SIZE*2+32);
+  ADC_SysTick_Handler();
 
-      // recover from overrun errors in ADCs
-      if (LL_ADC_IsActiveFlag_OVR(ADC1)) {
-        LL_ADC_ClearFlag_OVR(ADC1);
-      }
-      if (LL_ADC_IsActiveFlag_OVR(ADC2)) {
-        LL_ADC_ClearFlag_OVR(ADC2);
-      }
-
-      // streams must be diabled to load in number of data to transfer
-      LL_DMA_DisableStream(DMA2, LL_DMA_STREAM_0);
-      LL_DMA_DisableStream(DMA2, LL_DMA_STREAM_3);
-      while (LL_DMA_IsEnabledStream(DMA2, LL_DMA_STREAM_0) || LL_DMA_IsEnabledStream(DMA2, LL_DMA_STREAM_3));
-      // enable x stream
-      LL_DMA_SetMemoryAddress(DMA2, LL_DMA_STREAM_0, (uint32_t) inbufx);
-      LL_DMA_SetDataLength(DMA2, LL_DMA_STREAM_0, BUF_SIZE);
-      LL_DMA_EnableStream(DMA2, LL_DMA_STREAM_0);
-      // enable y stream
-      LL_DMA_SetMemoryAddress(DMA2, LL_DMA_STREAM_3, (uint32_t) inbufy);
-      LL_DMA_SetDataLength(DMA2, LL_DMA_STREAM_3, BUF_SIZE);
-      LL_DMA_EnableStream(DMA2, LL_DMA_STREAM_3);
-      // start DMA in ADCs
-      ADC1->CR2 |= (1 << 8); 
-      ADC2->CR2 |= (1 << 8);
-      // start ADC conversion
-      LL_ADC_REG_StartConversionSWStart(ADC1);    
-      LL_ADC_REG_StartConversionSWStart(ADC2);   
-    }
-  }
-
-  /* USER CODE END SysTick_IRQn 0 */
   HAL_IncTick();
-  /* USER CODE BEGIN SysTick_IRQn 1 */
-
-  /* USER CODE END SysTick_IRQn 1 */
 }
 
 /******************************************************************************/
@@ -245,44 +197,14 @@ void SysTick_Handler(void)
 /* please refer to the startup file (startup_stm32f7xx.s).                    */
 /******************************************************************************/
 
-/* USER CODE BEGIN 1 */
 
 void DMA2_Stream0_IRQHandler(void)
 {
-  if (LL_DMA_IsActiveFlag_TC0(DMA2)) {
-    LL_DMA_ClearFlag_TC0(DMA2);
-    inbufx_rdy = 1;
-    // if (LL_ADC_IsActiveFlag_EOCS(ADC1)) {
-    //   LL_ADC_ClearFlag_EOCS(ADC1);
-    // }
-    ADC1->SR &= ~(1 << 4);  // stop ADC conversion
-    ADC1->CR2 &= ~(1 << 8); // diable DMA in ADC
-  }
-  if (LL_DMA_IsActiveFlag_HT0(DMA2)) {
-    LL_DMA_ClearFlag_HT0(DMA2);
-  }
-
-  if (LL_DMA_IsActiveFlag_DME0(DMA2) || LL_DMA_IsActiveFlag_FE0(DMA2) || LL_DMA_IsActiveFlag_TE0(DMA2)) {
-    while (1) {
-
-    }
-  }
+  ADC_DMA_Stream1_Handler();
 }
 
 void DMA2_Stream3_IRQHandler(void)
 {
-  if (LL_DMA_IsActiveFlag_TC3(DMA2)) {
-    LL_DMA_ClearFlag_TC3(DMA2);
-    inbufy_rdy = 1;
-    // if (LL_ADC_IsActiveFlag_EOCS(ADC2)) {
-    //   LL_ADC_ClearFlag_EOCS(ADC2);
-    // }
-    ADC2->SR &= ~(1 << 4); // stop ADC conversion
-    ADC2->CR2 &= ~(1 << 8); // disable DMA in ADC
-  }
-  if (LL_DMA_IsActiveFlag_HT3(DMA2)) {
-    LL_DMA_ClearFlag_HT3(DMA2);
-  }
+  ADC_DMA_Stream2_Handler();
 }
 
-/* USER CODE END 1 */

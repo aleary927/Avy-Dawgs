@@ -6,7 +6,7 @@
 #include <stdint.h>
 
 // input buffer data size
-#define BUF_SIZE 2048
+#define BUF_SIZE 4096
 
 // time between bursts (in ms)
 #define BURST_PERIOD_MS 10
@@ -20,13 +20,3 @@ extern volatile int16_t inbufy[BUF_SIZE];
 // input buffer flags
 extern volatile int inbufx_rdy; 
 extern volatile int inbufy_rdy;
-
-
-// goertzel buffer size
-#define POWER_BUF_SIZE 5
-
-// goertzel buffers
-extern float powerbufx[POWER_BUF_SIZE];
-extern float powerbufy[POWER_BUF_SIZE];
-extern uint32_t powerbufx_pos;
-extern uint32_t powerbufy_pos;
