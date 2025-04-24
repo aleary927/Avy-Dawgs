@@ -31,11 +31,11 @@ typedef struct
 typedef struct 
 {
     uint32_t buf_size;       /* length of gbufx & gbufy */
-    uint32_t hist_size;      /* how many mags to average */
-    int      drop_steps;     /* consecutive drops → U-turn */
-    int      reverse_cd;     /* cooldown ticks after U-turn */
-    float    fwd_thresh;     /* straight-ahead angle cutoff (rad) */
-    float    min_valid_mag;  /* ignore anything weaker than this */
+    uint32_t hist_size;      /* how many mags to average [20]*/
+    int      drop_steps;     /* consecutive drops → U-turn [10]*/
+    int      reverse_cd;     /* cooldown ticks after U-turn [40]*/
+    float    fwd_thresh;     /* straight-ahead angle cutoff (rad) [pi/8]*/
+    float    min_valid_mag;  /* ignore anything weaker than this 1000*/
 } GuidanceParams;
 
 bool guidance_state_init(GuidanceState *st, const GuidanceParams *p);
