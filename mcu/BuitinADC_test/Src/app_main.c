@@ -123,8 +123,8 @@ void app_main(void)
         avg_power(powerbufx, &avgpowerbufcircx); 
         avg_power(powerbufy, &avgpowerbufcircy);
 
-        int avgpower_x = circ_buf_read(&avgpowerbufcircx);
-        int avgpower_y = circ_buf_read(&avgpowerbufcircy);
+        int avgpower_x = circ_buf_rd_float(&avgpowerbufcircx);
+        int avgpower_y = circ_buf_rd_float(&avgpowerbufcircy);
 
         snprintf(uart_buf, 99, "avg x: %d     avg y: %d\n\r", avgpower_x, avgpower_y);
         // snprintf(uart_buf, 99, "avg x: %d     avg y: %d\n\r", (int) max_power_x, (int) max_power_y);
@@ -175,5 +175,5 @@ void avg_power(float *pbuf, circ_buf_float *avg_pbuf)
   float avg = sum / POWER_BUF_SIZE;
 
   // save average in average power buffer
-  circ_buf_write(avg_pbuf, avg);
+  circ_buf_wr_float(avg_pbuf, avg);
 }

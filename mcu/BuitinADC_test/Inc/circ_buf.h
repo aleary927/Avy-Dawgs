@@ -6,7 +6,7 @@ typedef struct {
   uint32_t size;
 } circ_buf_float;
 
-void circ_buf_write(circ_buf_float *circ, float val)
+void circ_buf_wr_float(circ_buf_float *circ, float val)
 {
   uint32_t idx = circ->idx;
 
@@ -23,7 +23,7 @@ void circ_buf_write(circ_buf_float *circ, float val)
   }
 }
 
-float circ_buf_read(circ_buf_float *circ) 
+float circ_buf_rd_float(circ_buf_float *circ) 
 {
   uint32_t idx = circ->idx;
 
