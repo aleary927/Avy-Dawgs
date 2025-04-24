@@ -12,6 +12,7 @@
 #include "UART.h"
 #include <stdio.h>
 #include "circ_buf.h"
+#include "guidance.h"
 
 /*********************** 
  * Defines 
@@ -44,6 +45,18 @@ int burst_count;
 
 // buffer for usart transmit
 char uart_buf[100];
+
+// Guidance state and parameters
+static GuidanceState  g_guidance_state;
+static GuidanceParams g_guidance_params = 
+{
+  .buf_size      = POWER_AVG_BUF_SIZE,   // consume the same buffer size you’re averaging over
+  .hist_size     = POWER_AVG_BUF_SIZE,   // size of the rolling‐average window
+  .drop_steps    = 10,                   // how many drops before a U-turn
+  .reverse_cd    = 40,                   // cooldown ticks after a U-turn
+  .fwd_thresh    = 3.14159265/8.0f,            // straight‐ahead if angle ≤ 22.5°
+  .min_valid_mag =  0.0f                 // ignore magnitudes < 0 (i.e. never ignore)
+};
 
 /*************************
  * Function prototypes. 
@@ -106,6 +119,8 @@ void app_init(void)
   // init avg power circ bufs
   circ_buf_init_float(&avgpowerbufcircx, avgpowerbufx, POWER_AVG_BUF_SIZE);
   circ_buf_init_float(&avgpowerbufcircy, avgpowerbufy, POWER_AVG_BUF_SIZE);
+
+  guidance_state_init(&g_guidance_state, &g_guidance_params);
 }
 
 void process_step(void) 
@@ -156,7 +171,21 @@ void process_step(void)
     int avgpower_x = circ_buf_rd_float(&avgpowerbufcircx);
     int avgpower_y = circ_buf_rd_float(&avgpowerbufcircy);
 
-    snprintf(uart_buf, 99, "avg x: %d     avg y: %d\n\r", avgpower_x, avgpower_y);
+    //Implement Guidance function call here.
+    Direction dir = guidance_step(avgpowerbufcircx.buf, avgpowerbufcircy.buf, avgpowerbufcircx.idx, avgpowerbufcircy.idx, &g_guidance_state, &g_guidance_params);
+    const char *dir_str = "??";
+    switch(dir) 
+    {
+      case STRAIGHT_AHEAD: dir_str = "FWD";     
+        break;
+      case TURN_LEFT:      dir_str = "LEFT";    
+        break;
+      case TURN_RIGHT:     dir_str = "RIGHT";   
+        break;
+      case TURN_AROUND:    dir_str = "UTURN";   
+        break;
+    }
+    snprintf(uart_buf, 99, "avg x: %d  avg y: %d  dir: %s\n\r", avgpower_x, avgpower_y, dir_str);
     UART_Transmit(uart_buf);
   }
 }
