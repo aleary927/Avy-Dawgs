@@ -44,7 +44,7 @@ volatile int config_cplt;
 int burst_count;
 
 // buffer for usart transmit
-char uart_buf[100];
+char uart_buf[1000];
 
 // Guidance state and parameters
 static GuidanceState  g_guidance_state;
@@ -185,7 +185,7 @@ void process_step(void)
       case TURN_AROUND:    dir_str = "UTURN";   
         break;
     }
-    snprintf(uart_buf, 99, "avg x: %d  avg y: %d  dir: %s\n\r", avgpower_x, avgpower_y, dir_str);
+    snprintf(uart_buf, 1000, "avg x: %d  avg y: %d  dir: %s\n\r", avgpower_x, avgpower_y, dir_str);
     UART_Transmit(uart_buf);
   }
 }
