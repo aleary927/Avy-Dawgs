@@ -30,8 +30,5 @@ float goertzel_power(int16_t *data)
   float real = (q1 * cosine - q2) / scaling_factor; 
   float imag = (q1 * sine) / scaling_factor;
 
-  // float retval; 
-  // arm_sqrt_f32((real*real + imag*imag), &retval);
-  // return retval;
   return real*real + imag*imag;
 }

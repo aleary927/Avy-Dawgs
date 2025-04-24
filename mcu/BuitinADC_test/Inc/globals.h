@@ -3,14 +3,13 @@
  */
 
 #include "main.h"
-// #include "arm_math.h"
 #include <stdint.h>
 
 // input buffer data size
 #define BUF_SIZE 2048
 
 // time between bursts (in ms)
-#define BURST_PERIOD_MS 5
+#define BURST_PERIOD_MS 10
 
 // configuration complete flag
 extern volatile int config_cplt;
@@ -24,10 +23,10 @@ extern volatile int inbufy_rdy;
 
 
 // goertzel buffer size
-#define GOERTZEL_BUF_SIZE 10
+#define POWER_BUF_SIZE 5
 
 // goertzel buffers
-extern float goertzelbufx[GOERTZEL_BUF_SIZE];
-extern float goertzelbufy[GOERTZEL_BUF_SIZE];
-extern uint32_t goertzelbufx_pos;
-extern uint32_t goertzelbufy_pos;
+extern float powerbufx[POWER_BUF_SIZE];
+extern float powerbufy[POWER_BUF_SIZE];
+extern uint32_t powerbufx_pos;
+extern uint32_t powerbufy_pos;
