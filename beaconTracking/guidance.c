@@ -2,7 +2,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdlib.h>
-#include "circ_buf_float.h"
+#include <circ_buf_float.h>
 
 // Possible output directions for the user to follow
 typedef enum 
