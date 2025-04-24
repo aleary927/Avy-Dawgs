@@ -34,13 +34,15 @@ typedef struct
     uint32_t hist_size;     // length of our mag_history buffer
 } GuidanceParams;
 
-typedef bool init_ret;
 static inline bool guidance_state_init(GuidanceState *st, const GuidanceParams *p)
 {
     if (p -> hist_size == 0 || p -> buf_size == 0)
         return false;
 
     st -> history.buf = malloc(p -> hist_size * sizeof *st -> history.buf);
+    if (!st->history.buf)
+        return false;
+
     st -> history.idx  = 0;
     st -> history.size = p -> hist_size;
 
@@ -106,10 +108,9 @@ Direction guidance_step(const float *gbufx, const float *gbufy, uint32_t posx, u
     bool drop = (mag < avg_prev);
 
     // 7) update rolling sum + circ_buf
-    float old = circ_buf_rd_float(&st -> history);
-    st -> sum_history -= old;
-    circ_buf_wr_float(&st -> history, mag);
-    st -> sum_history += mag;
+    float old = st->history.buf[ st->history.idx ];  // the next-overwrite slot
+    circ_buf_wr_float(&st->history, mag);
+    st->sum_history = st->sum_history - old + mag;
 
     // 8) Handle cooldown and mode flips
     if (st -> cd_timer > 0) 
