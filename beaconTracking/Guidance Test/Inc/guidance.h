@@ -3,7 +3,7 @@
 
 #include <stdbool.h>
 #include <stdint.h>
-#include "circ_buf_float.h"
+#include "circ_buf.h"
 
 /**
  * Possible output directions for the user to follow
