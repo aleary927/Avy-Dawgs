@@ -21,7 +21,7 @@ params.hist_size     = 10;
 params.min_valid_mag = 0.05;
 params.drop_steps    = 5;
 params.reverse_cd    = 20;
-params.fwd_thresh    = pi/12;
+params.fwd_thresh    = pi/8;
 params.max_turn      = pi/6;
 params.step_size     = 0.5;
 
