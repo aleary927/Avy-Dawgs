@@ -6,7 +6,7 @@
 #include <stdint.h>
 
 // input buffer data size
-#define BUF_SIZE 4096
+#define BUF_SIZE 3600
 
 // time between bursts (in ms)
 #define BURST_PERIOD_MS 10

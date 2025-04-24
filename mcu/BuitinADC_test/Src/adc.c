@@ -32,7 +32,7 @@ void ADC_DMA_Config(void)
 
   LL_ADC_CommonInitTypeDef adc_commoninit;
   adc_commoninit.Multimode = LL_ADC_MULTI_INDEPENDENT; 
-  adc_commoninit.CommonClock = LL_ADC_CLOCK_SYNC_PCLK_DIV4; 
+  adc_commoninit.CommonClock = LL_ADC_CLOCK_SYNC_PCLK_DIV2; 
   adc_commoninit.MultiDMATransfer = LL_ADC_MULTI_REG_DMA_EACH_ADC;
   // configure common features of ADCs
   if (LL_ADC_CommonInit(ADC, &adc_commoninit)) {
