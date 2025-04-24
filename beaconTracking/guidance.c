@@ -12,37 +12,43 @@ typedef enum
     TURN_AROUND
 } Direction;
 
-// Tracks the history and current mode of the guidance algorithm
 typedef struct 
 {
-    float  *mag_history;    // circular buffer of recent signal magnitudes
-    uint32_t hist_idx;      // next slot in mag_history to overwrite
-    int    fwd_drops;       // how many consecutive drops seen in forward mode
-    int    rev_drops;       // how many consecutive drops seen in reverse mode
-    bool   reverse_lock;    // true if in reverse mode
-    int    cd_timer;        // ticks remaining before we can switch modes again
-    Direction last_dir;     // what direction we returned last time
+    float   *mag_history;  // circular buffer of recent magnitudes (linear scale)
+    uint32_t hist_idx;     // next slot in mag_history to overwrite
+    float    sum_history;  // rolling sum of values in mag_history
+    int      fwd_drops;    // how many consecutive drops seen in forward mode
+    int      rev_drops;    // how many consecutive drops seen in reverse mode
+    bool     reverse_lock; // true if in reverse mode
+    int      cd_timer;     // ticks remaining before we can switch modes again
+    Direction last_dir;    // what direction we returned last time
 } GuidanceState;
 
-// Tunable parameters for how sensitive and how often we reverse
 typedef struct 
 {
     uint32_t buf_size;      // length of the circular Goertzel power buffers
     int      drop_steps;    // how many drops in a row to trigger a mode change
     int      reverse_cd;    // cooldown duration (in measurements) after switching modes
     float    fwd_thresh;    // maximum angular offset (radians) to still call straight
-    float    min_valid_mag; // ignore any mag below this
+    float    min_valid_mag; // ignore any magnitude below this (linear units)
     uint32_t hist_size;     // length of our mag_history buffer
 } GuidanceParams;
 
-static inline void guidance_state_init (GuidanceState *st, const GuidanceParams *p)
+static inline bool guidance_state_init(GuidanceState *st, const GuidanceParams *p)
 {
-    // allocate the history buffer
-    st->mag_history = malloc(p->hist_size * sizeof(*st->mag_history));
-    // initialize every slot to min_valid_mag so initial avg is stable
-    for (uint32_t i = 0; i < p->hist_size; i++) {
-        st->mag_history[i] = p->min_valid_mag;
+    if (p -> hist_size == 0 || p -> buf_size == 0)
+        return false;
+
+    st -> mag_history = malloc(p -> hist_size * sizeof *st -> mag_history);
+    if (!st->mag_history)
+        return false;
+
+    // initialize every slot to min_valid_mag, and set rolling sum accordingly
+    for (uint32_t i = 0; i < p -> hist_size; i++) 
+    {
+        st -> mag_history[i] = p -> min_valid_mag;
     }
+    st -> sum_history = p -> min_valid_mag * p -> hist_size;
 
     st -> hist_idx = 0;
     st -> fwd_drops = 0;
@@ -50,12 +56,13 @@ static inline void guidance_state_init (GuidanceState *st, const GuidanceParams 
     st -> reverse_lock = false;
     st -> cd_timer = 0;
     st -> last_dir = STRAIGHT_AHEAD;
+    return true;
 }
 
 static inline void guidance_state_free(GuidanceState *st)
 {
-    free(st->mag_history);
-    st->mag_history = NULL;
+    free(st -> mag_history);
+    st -> mag_history = NULL;
 }
 
 /**
@@ -71,85 +78,87 @@ static inline void guidance_state_free(GuidanceState *st)
  * @param p           pointer to GuidanceParams
  * @return            a Direction enum telling the user where to go next
  */
-
 Direction guidance_step(const float *gbufx, const float *gbufy, uint32_t posx, uint32_t posy, GuidanceState *st, const GuidanceParams *p)
 {
-    // 1) Fetch most recent sample from each buffer
-    uint32_t ix = posx ? posx - 1 : p->buf_size - 1;
-    uint32_t iy = posy ? posy - 1 : p->buf_size - 1;
+    // 1) Fetch most recent sample index
+    uint32_t ix = (posx < p -> buf_size) ? (posx ? posx - 1 : p -> buf_size - 1) : (p -> buf_size - 1);
+    uint32_t iy = (posy < p -> buf_size) ? (posy ? posy - 1 : p -> buf_size - 1) : (p -> buf_size - 1);
     float Bpar_db  = gbufx[ix];
     float Bperp_db = gbufy[iy];
 
-    // 2) overall magnitude
-    float mag = sqrtf(Bpar_db * Bpar_db + Bperp_db * Bperp_db);
+    // 2) Convert dB readings to linear amplitude
+    float Bpar_lin  = powf(10.0f, Bpar_db  / 20.0f);
+    float Bperp_lin = powf(10.0f, Bperp_db / 20.0f);
 
-    // 3) if it's too weak, ignore it and repeat last direction
-    if (mag < p->min_valid_mag) 
+    // 3) overall magnitude in linear units
+    float mag = sqrtf(Bpar_lin * Bpar_lin + Bperp_lin * Bperp_lin);
+
+    // 4) if it's too weak, repeat last direction (history and counters unchanged)
+    if (mag < p -> min_valid_mag) 
     {
-        return st->last_dir;
+        return st -> last_dir;
     }
 
-    // 4) Compute average of the previous hist_size mags
-    float sum = 0.0f;
-    for (uint32_t i = 0; i < p->hist_size; i++) {
-        sum += st->mag_history[i];
-    }
-    float avg_prev = sum / p->hist_size;
+    // 5) Compute average of history in O(1) via rolling sum
+    float avg_prev = st -> sum_history / (float)p -> hist_size;
 
-    // 5) Detect a drop if current mag dips below that average
+    // 6) Detect a drop
     bool drop = (mag < avg_prev);
 
-    // 6) Update our history buffer
+    // 7) Update rolling sum and history buffer
+    //    subtract oldest, add new
+    st -> sum_history -= st -> mag_history[st -> hist_idx];
+    st -> sum_history += mag;
     st -> mag_history[st -> hist_idx] = mag;
     st -> hist_idx = (st -> hist_idx + 1) % p -> hist_size;
 
-    // 7) Handle cooldown, then possibly flip forward/reverse mode.
+    // 8) Handle cooldown and mode flips
     if (st -> cd_timer > 0) 
     {
-        st -> cd_timer--; // Still cooling down from last switch; just decrement timer
-    } 
-    else // Cooldown expired: allow counting drops toward a mode flip
+        st -> cd_timer--;
+    }
+    else 
     {
-        if (!st->reverse_lock) 
+        if (!st -> reverse_lock) 
         {
-            st -> fwd_drops = drop ? (st -> fwd_drops + 1) : 0; // In forward mode: count drops and switch to reverse if threshold reached
+            st -> fwd_drops = drop ? (st -> fwd_drops + 1) : 0;
             if (st -> fwd_drops >= p -> drop_steps) 
             {
-                st -> reverse_lock = true; // enter reverse mode
-                st -> fwd_drops = 0; // reset counter
-                st -> cd_timer = p->reverse_cd; // start cooldown
+                st -> reverse_lock = true;
+                st -> fwd_drops    = 0;
+                st -> cd_timer     = p -> reverse_cd;
             }
         } 
         else 
         {
-            st -> rev_drops = drop ? (st -> rev_drops + 1) : 0; // In reverse mode: count drops and switch back when threshold reached
+            st -> rev_drops = drop ? (st -> rev_drops + 1) : 0;
             if (st -> rev_drops >= p -> drop_steps) 
             {
-                st -> reverse_lock = false; // back to forward mode
-                st -> rev_drops = 0; // reset counter
-                st -> cd_timer = p -> reverse_cd; // start cooldown
+                st -> reverse_lock = false;
+                st -> rev_drops    = 0;
+                st -> cd_timer     = p -> reverse_cd;
             }
         }
     }
 
-    // 8) If in reverse mode, flip the sign of both components
-    float Bpar  = st -> reverse_lock ? -Bpar_db  : Bpar_db;
-    float Bperp = st -> reverse_lock ? -Bperp_db : Bperp_db;
+    // 9) Possibly flip vector in reverse mode
+    float Ppar  = st -> reverse_lock ? -Bpar_lin  : Bpar_lin;
+    float Pperp = st -> reverse_lock ? -Bperp_lin : Bperp_lin;
 
-    // 9) Translate vector into a discrete direction command
+    // 10) Translate into a discrete direction
     Direction dir;
-    if (Bpar < 0.0f) 
+    if (Ppar < 0.0f) 
     {
-        dir = TURN_AROUND; // If the parallel component points backwards, do a full turn around
-    }
-    else
+        dir = TURN_AROUND;
+    } 
+    else 
     {
-        float ang = atan2f(Bperp, Bpar); // Compute the deviation angle from straight ahead
-        if (fabsf(ang) <= p -> fwd_thresh) // If within the straight-ahead threshold, keep going
+        float ang = atan2f(Pperp, Ppar);
+        if (fabsf(ang) <= p -> fwd_thresh) 
         {
             dir = STRAIGHT_AHEAD;
         } 
-        else if (ang > 0.0f) // Otherwise, choose left or right based on the sign of the angle
+        else if (ang > 0.0f) 
         {
             dir = TURN_LEFT;
         } 
@@ -159,7 +168,7 @@ Direction guidance_step(const float *gbufx, const float *gbufy, uint32_t posx, u
         }
     }
 
-    // 10) Save for next time, then return.
-    st -> last_dir = dir;
+    // 11) Save and return
+    st->last_dir = dir;
     return dir;
 }
