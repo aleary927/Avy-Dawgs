@@ -4,24 +4,33 @@
 
 bool guidance_state_init(GuidanceState *st, const GuidanceParams *p)
 {
+    // Validate tuning parameters
     if (p -> hist_size == 0 || p -> buf_size == 0)
         return false;
 
+    // Allocate circular buffer for magnitude history
     st -> history.buf = malloc(p -> hist_size * sizeof *st -> history.buf);
     if (!st->history.buf)
         return false;
 
+    // Initialize buffer indices and size
     st -> history.idx  = 0;
     st -> history.size = p -> hist_size;
 
+    // Seed history buffer with the minimum valid magnitude
     for (uint32_t i = 0; i < p -> hist_size; i++)
         st -> history.buf[i] = p -> min_valid_mag;
+
+    // Rolling sum corresponds to all entries at min_valid_mag
     st -> sum_history = p -> min_valid_mag * p -> hist_size;
 
+    // Reset drop counters and mode state
     st -> fwd_drops = 0;
     st -> rev_drops = 0;
     st -> reverse_lock = false;
     st -> cd_timer = 0;
+
+    // Start with "go straight" as the last direction
     st -> last_dir = STRAIGHT_AHEAD;
     return true;
 }
@@ -37,6 +46,7 @@ Direction guidance_step(const float *gbufx, const float *gbufy, uint32_t posx, u
     // 1) Fetch most recent sample index
     uint32_t ix = (posx < p -> buf_size ? posx : 0);
     uint32_t iy = (posy < p -> buf_size ? posy : 0);
+    // Step back one slot (wrap to end if at zero)
     ix = ix ? ix - 1 : p -> buf_size - 1;
     iy = iy ? iy - 1 : p -> buf_size - 1;
 
