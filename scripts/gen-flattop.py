@@ -48,7 +48,9 @@ if __name__ == '__main__':
             f.write('int32_t ') 
         case 'float32': 
             f.write('float ')
-    f.write('array_name[2048] = {\n')
+    f.write(f'array_name[{window_size}]')
+    f.write(' = {\n')
+    # f.write('array_name[2048] = {\n')
 
     for i in range(window_size - 1):
         count = count + 1;
