@@ -2,6 +2,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdlib.h>
+#include "circ_buf_float.h"
 
 // Possible output directions for the user to follow
 typedef enum 
@@ -14,14 +15,13 @@ typedef enum
 
 typedef struct 
 {
-    float   *mag_history;  // circular buffer of recent magnitudes (linear scale)
-    uint32_t hist_idx;     // next slot in mag_history to overwrite
-    float    sum_history;  // rolling sum of values in mag_history
-    int      fwd_drops;    // how many consecutive drops seen in forward mode
-    int      rev_drops;    // how many consecutive drops seen in reverse mode
-    bool     reverse_lock; // true if in reverse mode
-    int      cd_timer;     // ticks remaining before we can switch modes again
-    Direction last_dir;    // what direction we returned last time
+    circ_buf_float  history;        // circular buffer of recent magnitudes (linear scale)
+    float           sum_history;    // rolling sum of values in mag_history
+    int             fwd_drops;      // how many consecutive drops seen in forward mode
+    int             rev_drops;      // how many consecutive drops seen in reverse mode
+    bool            reverse_lock;   // true if in reverse mode
+    int             cd_timer;       // ticks remaining before we can switch modes again
+    Direction       last_dir;       // what direction we returned last time
 } GuidanceState;
 
 typedef struct 
@@ -34,23 +34,20 @@ typedef struct
     uint32_t hist_size;     // length of our mag_history buffer
 } GuidanceParams;
 
+typedef bool init_ret;
 static inline bool guidance_state_init(GuidanceState *st, const GuidanceParams *p)
 {
     if (p -> hist_size == 0 || p -> buf_size == 0)
         return false;
 
-    st -> mag_history = malloc(p -> hist_size * sizeof *st -> mag_history);
-    if (!st->mag_history)
-        return false;
+    st -> history.buf = malloc(p -> hist_size * sizeof *st -> history.buf);
+    st -> history.idx  = 0;
+    st -> history.size = p -> hist_size;
 
-    // initialize every slot to min_valid_mag, and set rolling sum accordingly
-    for (uint32_t i = 0; i < p -> hist_size; i++) 
-    {
-        st -> mag_history[i] = p -> min_valid_mag;
-    }
+    for (uint32_t i = 0; i < p -> hist_size; i++)
+        st -> history.buf[i] = p -> min_valid_mag;
     st -> sum_history = p -> min_valid_mag * p -> hist_size;
 
-    st -> hist_idx = 0;
     st -> fwd_drops = 0;
     st -> rev_drops = 0;
     st -> reverse_lock = false;
@@ -61,8 +58,8 @@ static inline bool guidance_state_init(GuidanceState *st, const GuidanceParams *
 
 static inline void guidance_state_free(GuidanceState *st)
 {
-    free(st -> mag_history);
-    st -> mag_history = NULL;
+    free(st -> history.buf);
+    st -> history.buf = NULL;
 }
 
 /**
@@ -81,8 +78,11 @@ static inline void guidance_state_free(GuidanceState *st)
 Direction guidance_step(const float *gbufx, const float *gbufy, uint32_t posx, uint32_t posy, GuidanceState *st, const GuidanceParams *p)
 {
     // 1) Fetch most recent sample index
-    uint32_t ix = (posx < p -> buf_size) ? (posx ? posx - 1 : p -> buf_size - 1) : (p -> buf_size - 1);
-    uint32_t iy = (posy < p -> buf_size) ? (posy ? posy - 1 : p -> buf_size - 1) : (p -> buf_size - 1);
+    uint32_t ix = (posx < p -> buf_size ? posx : 0);
+    uint32_t iy = (posy < p -> buf_size ? posy : 0);
+    ix = ix ? ix - 1 : p -> buf_size - 1;
+    iy = iy ? iy - 1 : p -> buf_size - 1;
+
     float Bpar_db  = gbufx[ix];
     float Bperp_db = gbufy[iy];
 
@@ -105,12 +105,11 @@ Direction guidance_step(const float *gbufx, const float *gbufy, uint32_t posx, u
     // 6) Detect a drop
     bool drop = (mag < avg_prev);
 
-    // 7) Update rolling sum and history buffer
-    //    subtract oldest, add new
-    st -> sum_history -= st -> mag_history[st -> hist_idx];
+    // 7) update rolling sum + circ_buf
+    float old = circ_buf_rd_float(&st -> history);
+    st -> sum_history -= old;
+    circ_buf_wr_float(&st -> history, mag);
     st -> sum_history += mag;
-    st -> mag_history[st -> hist_idx] = mag;
-    st -> hist_idx = (st -> hist_idx + 1) % p -> hist_size;
 
     // 8) Handle cooldown and mode flips
     if (st -> cd_timer > 0) 
