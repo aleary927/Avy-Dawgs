@@ -41,7 +41,7 @@ void guidance_state_free(GuidanceState *st)
     st -> history.buf = NULL;
 }
 
-Direction guidance_step(const float *gbufx, const float *gbufy, uint32_t posx, uint32_t posy, GuidanceState *st, const GuidanceParams *p)
+Direction guidance_step(const float *pbufx, const float *pbufy, uint32_t posx, uint32_t posy, GuidanceState *st, const GuidanceParams *p)
 {
     // 1) Fetch most recent sample index
     uint32_t ix = (posx < p -> buf_size ? posx : 0);
@@ -50,12 +50,9 @@ Direction guidance_step(const float *gbufx, const float *gbufy, uint32_t posx, u
     ix = ix ? ix - 1 : p -> buf_size - 1;
     iy = iy ? iy - 1 : p -> buf_size - 1;
 
-    float Bpar_db  = gbufx[ix];
-    float Bperp_db = gbufy[iy];
-
-    // 2) Convert dB readings to linear amplitude
-    float Bpar_lin  = powf(10.0f, Bpar_db  / 20.0f);
-    float Bperp_lin = powf(10.0f, Bperp_db / 20.0f);
+    // 2) Store value into linear variable
+    float Bpar_lin  = pbufx[ix];
+    float Bperp_lin = pbufy[iy];
 
     // 3) overall magnitude in linear units
     float mag = sqrtf(Bpar_lin * Bpar_lin + Bperp_lin * Bperp_lin);

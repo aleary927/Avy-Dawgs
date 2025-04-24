@@ -1,0 +1,200 @@
+% handheld_guidance.m
+% Simulate a handheld receiver guiding a person to a beacon using only
+% local power readings from two orthogonal antennas (parallel & perp).
+% Fixed-size turns, immediate reversal when heading away, and cooldown.
+
+%% === Constants and Grid Setup ===
+mu0    = 4*pi*1e-7;           % Permeability of free space (H/m)
+m      = 1e-2;                % Magnetic moment of the beacon (A·m^2)
+range  = 40;                  % Half-width of simulation area (m)
+res    = 0.5;                 % Grid resolution (m)
+
+[x,y]  = meshgrid(-range:res:range, -range:res:range);
+
+% Precompute the dipole field
+r = sqrt(x.^2 + y.^2);
+r(r==0) = eps;
+theta = atan2(y,x);
+Br = mu0*m ./ (4*pi*r.^3) .* (2 .* cos(theta));
+Bt = mu0*m ./ (4*pi*r.^3) .* sin(theta);
+BxF = Br .* cos(theta) - Bt .* sin(theta);
+ByF = Br .* sin(theta) + Bt .* cos(theta);
+
+%% === Initialize Person Position & State ===
+%pos = (rand(1,2)*2-1) * (range-5);
+pos = [20,20];
+while norm(pos) < 10
+    pos = (rand(1,2)*2-1) * (range-5);
+end
+heading = rand(1,2); 
+heading = heading/norm(heading);
+
+% Initial signal magnitude
+Bx0 = interp2(x,y,BxF,pos(1),pos(2),'linear',0);
+By0 = interp2(x,y,ByF,pos(1),pos(2),'linear',0);
+state.initial_Bmag = norm([Bx0,By0]);
+state.last_Bmag    = state.initial_Bmag;
+
+% Cooldown state
+state.cd_timer     = 0;
+
+% Motion & turn parameters
+params.max_turn    = pi/6;     % fixed turn angle (rad)
+params.fwd_thresh  = pi/12;    % angle below which we go straight
+params.step_min    = 0.3;
+params.step_max    = 1.2;
+params.reverse_cd  = 15;       % cooldown steps after any reversal
+
+%% === Prepare Logs & Figure ===
+steps     = 300;
+pos_log   = nan(steps,2);
+Bmag_log  = nan(steps,1);
+Bpar_log  = nan(steps,1);
+Bperp_log = nan(steps,1);
+
+figure('Position',[100 100 1600 500]);
+% 1) Field & path
+subplot(1,3,1);
+mag = sqrt(BxF.^2+ByF.^2);
+quiver(x,y, BxF./mag, ByF./mag, .5,'k'); hold on;
+p_dot = plot(NaN,NaN,'ro','MarkerFaceColor','r');
+h_head = quiver(NaN,NaN,0,0,2,'b','LineWidth',2);
+plot(0,0,'bs','MarkerSize',10,'LineWidth',2);
+axis equal; xlabel('X (m)'); ylabel('Y (m)');
+title('Flux Lines & Path');
+
+% 2) Signal strengths
+subplot(1,3,2);
+hB = plot(NaN,NaN,'-k','LineWidth',2); hold on;
+hP = plot(NaN,NaN,'-r','LineWidth',1.5);
+hQ = plot(NaN,NaN,'-b','LineWidth',1.5);
+legend('|B|','B_{||}','B_{\perp}','Location','NW');
+xlabel('Step'); ylabel('Magnitude');
+title('Signals');
+
+% 3) Receiver suggestion arrow
+subplot(1,3,3);
+h_sug = quiver(0,0,0,0,'LineWidth',2,'MaxHeadSize',2,'AutoScale','off');
+axis([-1 1 -1 1]); axis off;
+title('Receiver Suggestion');
+
+%% === Main Simulation Loop ===
+for k = 1:steps
+    % 1) Sample the field
+    Bx   = interp2(x,y,BxF,pos(1),pos(2),'linear',0);
+    By   = interp2(x,y,ByF,pos(1),pos(2),'linear',0);
+    Bvec = [Bx,By];
+
+    % 2) Guidance helper
+    [heading, sug, state, Bpar, Bperp, Bmag, step_size] = guidance(...
+        Bvec, heading, state, params);
+
+    % 3) Move and clamp inside map
+    pos = pos + step_size * heading;
+    pos = max(min(pos, range), -range);
+
+    % 4) Log
+    pos_log(k,:)   = pos;
+    Bmag_log(k)    = Bmag;
+    Bpar_log(k)    = abs(Bpar);
+    Bperp_log(k)   = abs(Bperp);
+
+    % 5) Update path plot
+    subplot(1,3,1);
+      set(p_dot,'XData',pos(1),'YData',pos(2));
+      set(h_head,'XData',pos(1),'YData',pos(2),...
+                 'UData',heading(1),'VData',heading(2));
+      plot(pos_log(1:k,1),pos_log(1:k,2),'r-');
+
+    % 6) Update signals plot
+    subplot(1,3,2);
+      set(hB,'XData',1:k,'YData',Bmag_log(1:k));
+      set(hP,'XData',1:k,'YData',Bpar_log(1:k));
+      set(hQ,'XData',1:k,'YData',Bperp_log(1:k));
+
+    % 7) Update suggestion arrow
+    vec = [0,0];
+    switch sug
+      case "Straight ahead", vec = [0,1];
+      case "Turn left",      vec = [-1,0];
+      case "Turn right",     vec = [1,0];
+      case "Turn around",    vec = [0,-1];
+    end
+    subplot(1,3,3);
+      set(h_sug,'UData',vec(1),'VData',vec(2));
+
+    drawnow; pause(0.03);
+
+    % 8) Stop if beacon reached
+    if Bmag > 0.3
+        disp("Beacon reached!");
+        break;
+    end
+end
+
+%% === guidance helper ===
+function [heading, sug, state, Bpar, Bperp, Bmag, step_size] = guidance(...
+        Bvec, heading, state, params)
+
+    %—— 1) Decompose the local reading into components along & across heading
+    Bmag = norm(Bvec);
+    Bpar = dot(Bvec, heading);            % positive ⇒ uphill
+    perp = [-heading(2), heading(1)];      
+    Bperp = dot(Bvec, perp);               % sign tells left/right
+
+    %—— 2) Compute the angular error to the uphill direction
+    ang_err = atan2(Bperp, Bpar);          % in (–π, π]
+
+    %—— 3) If we’re pointed more than 90° away and cooldown expired, U-turn
+    if abs(ang_err) > pi/2 && state.cd_timer <= 0
+        heading       = -heading;
+        sug           = "Turn around";
+        state.cd_timer = params.reverse_cd;   % start cooldown
+        % compute step_size for this move
+        step_size = max(params.step_min, ...
+                        min(params.step_max, 5*(1 - Bmag/state.initial_Bmag)));
+        state.last_Bmag = Bmag;
+        return
+    end
+
+    %—— 4) Otherwise decrement cooldown if active
+    if state.cd_timer > 0
+        state.cd_timer = state.cd_timer - 1;
+    end
+
+    %—— 5) Decide left/right/straight based on error, using fixed turn size
+    if abs(ang_err) <= params.fwd_thresh
+        sug  = "Straight ahead";
+        turn = 0;
+    elseif ang_err > 0
+        sug  = "Turn left";
+        turn =  params.max_turn;
+    else
+        sug  = "Turn right";
+        turn = -params.max_turn;
+    end
+
+    %—— 6) Apply the turn
+    heading = rotate_vector(heading, turn);
+    heading = heading / norm(heading);
+
+    %—— 7) Adaptive step size (stronger signal ⇒ smaller step)
+    step_size = max(params.step_min, ...
+                    min(params.step_max, 5*(1 - Bmag/state.initial_Bmag)));
+
+    %—— 8) Update state
+    state.last_Bmag = Bmag;
+end
+
+%% === rotate helper ===
+function v2 = rotate_vector(v, theta)
+    R  = [cos(theta), -sin(theta); sin(theta), cos(theta)];
+    v2 = (R * v')';
+end
+
+
+%% === rotate helper ===
+function v2 = rotate_vector(v, theta)
+    R  = [cos(theta), -sin(theta); sin(theta), cos(theta)];
+    v2 = (R * v')';
+end
