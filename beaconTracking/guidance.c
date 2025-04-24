@@ -1,40 +1,8 @@
+#include "guidance.h"
 #include <math.h>
-#include <stdbool.h>
-#include <stdint.h>
 #include <stdlib.h>
-#include <circ_buf_float.h>
 
-// Possible output directions for the user to follow
-typedef enum 
-{
-    STRAIGHT_AHEAD,
-    TURN_LEFT,
-    TURN_RIGHT,
-    TURN_AROUND
-} Direction;
-
-typedef struct 
-{
-    circ_buf_float  history;        // circular buffer of recent magnitudes (linear scale)
-    float           sum_history;    // rolling sum of values in mag_history
-    int             fwd_drops;      // how many consecutive drops seen in forward mode
-    int             rev_drops;      // how many consecutive drops seen in reverse mode
-    bool            reverse_lock;   // true if in reverse mode
-    int             cd_timer;       // ticks remaining before we can switch modes again
-    Direction       last_dir;       // what direction we returned last time
-} GuidanceState;
-
-typedef struct 
-{
-    uint32_t buf_size;      // length of the circular Goertzel power buffers
-    int      drop_steps;    // how many drops in a row to trigger a mode change
-    int      reverse_cd;    // cooldown duration (in measurements) after switching modes
-    float    fwd_thresh;    // maximum angular offset (radians) to still call straight
-    float    min_valid_mag; // ignore any magnitude below this (linear units)
-    uint32_t hist_size;     // length of our mag_history buffer
-} GuidanceParams;
-
-static inline bool guidance_state_init(GuidanceState *st, const GuidanceParams *p)
+bool guidance_state_init(GuidanceState *st, const GuidanceParams *p)
 {
     if (p -> hist_size == 0 || p -> buf_size == 0)
         return false;
@@ -58,25 +26,12 @@ static inline bool guidance_state_init(GuidanceState *st, const GuidanceParams *
     return true;
 }
 
-static inline void guidance_state_free(GuidanceState *st)
+void guidance_state_free(GuidanceState *st)
 {
     free(st -> history.buf);
     st -> history.buf = NULL;
 }
 
-/**
- * Examine the latest two antenna power readings, update our internal state,
- * and suggest which way to head next. Only use samples stronger than min_valid_mag. 
- * If we see a weak sample, just re-issue the last direction.
- *
- * @param gbufx       pointer to the circular buffer of X-axis (parallel) power values
- * @param gbufy       pointer to the circular buffer of Y-axis (perpendicular) power values
- * @param posx        next write index into gbufx
- * @param posy        next write index into gbufy
- * @param st          pointer to persistent GuidanceState (init before use)
- * @param p           pointer to GuidanceParams
- * @return            a Direction enum telling the user where to go next
- */
 Direction guidance_step(const float *gbufx, const float *gbufy, uint32_t posx, uint32_t posy, GuidanceState *st, const GuidanceParams *p)
 {
     // 1) Fetch most recent sample index
