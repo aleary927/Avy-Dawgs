@@ -2,9 +2,9 @@
 #ifndef GUIDANCE_H
 #define GUIDANCE_H
 
+#include "circ_buf.h"
 #include <stdbool.h>
 #include <stdint.h>
-#include "circ_buf.h"
 
 typedef enum 
 {

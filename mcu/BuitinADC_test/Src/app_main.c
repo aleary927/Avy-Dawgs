@@ -11,8 +11,8 @@
 #include "constants.h"
 #include "UART.h"
 #include <stdio.h>
-#include "circ_buf.h"
 #include "guidance.h"
+#include "circ_buf.h"
 
 /*********************** 
  * Defines 
@@ -213,10 +213,10 @@ void power_calc(int16_t *buf, circ_buf_float *pbuf)
   }
 
   // convert power to dB
-  float power_db = 10 * log10f(power);
+  // float power_db = 10 * log10f(power);
 
   // save in buffer 
-  circ_buf_wr_float(pbuf, power_db);
+  circ_buf_wr_float(pbuf, power);
 }
 
 /*
