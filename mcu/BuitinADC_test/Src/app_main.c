@@ -57,8 +57,8 @@ static GuidanceParams g_guidance_params =
   .hist_size     = POWER_AVG_BUF_SIZE,   // size of the rolling‐average window
   .drop_steps    = 10,                   // how many drops before a U-turn
   .reverse_cd    = 40,                   // cooldown ticks after a U-turn
-  .fwd_thresh    = 3.14159265/8.0f,            // straight‐ahead if angle ≤ 22.5°
-  .min_valid_mag =  0.0f                 // ignore magnitudes < 0 (i.e. never ignore)
+  .fwd_thresh    = 3.14159265/8.0f,      // straight‐ahead if angle ≤ 22.5°
+  .min_valid_mag =  10.0f                 // ignore magnitudes < 0 (i.e. never ignore)
 };
 
 /*************************
@@ -192,6 +192,8 @@ void process_step(void)
         case TURN_RIGHT:     dir_str = "RIGHT";   
           break;
         case TURN_AROUND:    dir_str = "UTURN";   
+          break;
+        case NO_SIGNAL:      dir_str = "NOSIGNAL"
           break;
       }
       // snprintf(uart_buf, 1000, "avg x: %d  avg y: %d  dir: %s\n\r", (int) 10 * log10f(avgpower_x), (int) 10 * log10f(avgpower_y), dir_str);

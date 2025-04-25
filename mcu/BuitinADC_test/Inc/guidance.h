@@ -13,7 +13,8 @@ typedef enum
     STRAIGHT_AHEAD,
     TURN_LEFT,
     TURN_RIGHT,
-    TURN_AROUND
+    TURN_AROUND,
+    NO_SIGNAL
 } Direction;
 
 typedef struct 
