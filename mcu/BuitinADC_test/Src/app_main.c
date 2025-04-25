@@ -58,7 +58,7 @@ static GuidanceParams g_guidance_params =
   .drop_steps    = 10,                   // how many drops before a U-turn
   .reverse_cd    = 40,                   // cooldown ticks after a U-turn
   .fwd_thresh    = 3.14159265/8.0f,      // straight‐ahead if angle ≤ 22.5°
-  .min_valid_mag =  4.0f                 // ignore magnitudes < 0 (i.e. never ignore)
+  .min_valid_mag =  4.0f                 // ignore magnitudes < 4
 };
 
 /*************************

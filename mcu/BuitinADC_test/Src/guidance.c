@@ -45,13 +45,11 @@ Direction guidance_step(const float *gbufx, const float *gbufy, uint32_t posx, u
     float Bpar  = fabsf(gbufx[ix]);
     float Bperp = fabsf(gbufy[iy]);
 
-    Direction out;
     // --- 2) Combined magnitude & weak-signal check ---
     float mag = sqrtf(Bpar*Bpar + Bperp*Bperp);
     if (mag < p->min_valid_mag) 
     {
-        out = NO_SIGNAL;
-        return out;
+        return st -> last_dir;
     }
 
     // --- 3) First real measurement seeds your history buffer ---
@@ -89,6 +87,7 @@ Direction guidance_step(const float *gbufx, const float *gbufy, uint32_t posx, u
         }
     }
 
+    Direction out;
     // --- 6) Steering (reverse_lock handled first) ---
     if (st->reverse_lock) 
     {
