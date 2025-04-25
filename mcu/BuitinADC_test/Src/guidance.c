@@ -1,18 +1,17 @@
 // guidance.c
 #include "guidance.h"
-#include <stdlib.h>
 #include <math.h>
 
 #define EPSILON 1e-6f
 
+#define MAX_HIST_SIZE 64
+static float hist_buf[MAX_HIST_SIZE];
+
 bool guidance_state_init(GuidanceState *st, const GuidanceParams *p)
 {
-    if (!p || p->hist_size == 0 || p->buf_size == 0)
+    if (!p || p->hist_size == 0 || p->hist_size > MAX_HIST_SIZE || p->buf_size == 0)
         return false;
-
-    st->history.buf = malloc(p->hist_size * sizeof *st->history.buf);
-    if (!st->history.buf) 
-        return false;
+    st->history.buf  = hist_buf;
     st->history.size = p->hist_size;
     st->history.idx  = 0;
 
@@ -34,11 +33,6 @@ bool guidance_state_init(GuidanceState *st, const GuidanceParams *p)
     return true;
 }
 
-void guidance_state_free(GuidanceState *st)
-{
-    free(st->history.buf);
-    st->history.buf = NULL;
-}
 
 Direction guidance_step(const float *gbufx, const float *gbufy, uint32_t posx, uint32_t posy, GuidanceState *st, const GuidanceParams *p)
 {

@@ -6,6 +6,8 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+#define MAX_HIST_SIZE 64
+
 typedef enum 
 {
     STRAIGHT_AHEAD,
@@ -39,7 +41,6 @@ typedef struct
 } GuidanceParams;
 
 bool guidance_state_init(GuidanceState *st, const GuidanceParams *p);
-void guidance_state_free(GuidanceState *st);
 
 Direction guidance_step(const float *gbufx, const float *gbufy, uint32_t posx, uint32_t posy, GuidanceState *st, const GuidanceParams *p);
 
