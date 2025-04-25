@@ -6,6 +6,9 @@
 * Dax Jennings
 * Noah Sikorski
 
+## Project Purpose/Functionality
+This pupose of this project is to receive the 457kHz signal from a transmitting avalanche beacon and guide the user to it. This is a hanheld device that displays its calculated distance from the transmitting beacon as well as an arrow to guide the user to the transmitting beacon. Because the range of our antenna isn't very long, we also wrote code to simulate the output of a transmitting beacon from a waveform generator in order to show the display of output and direction output by our device.
+
 ## Repository Structure 
 This repository is organized into the following folders. 
 
