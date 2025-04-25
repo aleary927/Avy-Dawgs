@@ -33,6 +33,7 @@ set(Application_Src
     ${CMAKE_SOURCE_DIR}/Src/adc.c
     ${CMAKE_SOURCE_DIR}/Src/dsp.c
     ${CMAKE_SOURCE_DIR}/Src/UART.c
+    ${CMAKE_SOURCE_DIR}/Src/guidance.c   
 )
 
 # Include toolchain file
