@@ -43,6 +43,9 @@ volatile int config_cplt;
 // count of ADC bursts
 int burst_count;
 
+// count of avg power for calls to guicance 
+int guidance_count;
+
 // buffer for usart transmit
 char uart_buf[1000];
 
@@ -111,6 +114,8 @@ void app_init(void)
 {
   // initialize burst count
   burst_count = 0;
+  
+  guidance_count = 0;
 
   // init power circ bufs
   circ_buf_init_float(&powerbufcircx, powerbufx, POWER_BUF_SIZE);
@@ -168,25 +173,32 @@ void process_step(void)
     avg_power(powerbufx, &avgpowerbufcircx); 
     avg_power(powerbufy, &avgpowerbufcircy);
 
-    int avgpower_x = circ_buf_rd_float(&avgpowerbufcircx);
-    int avgpower_y = circ_buf_rd_float(&avgpowerbufcircy);
+    float avgpower_x = 10 * log10f(circ_buf_rd_float(&avgpowerbufcircx));
+    float avgpower_y = 10 * log10f(circ_buf_rd_float(&avgpowerbufcircy));
 
-    //Implement Guidance function call here.
-    Direction dir = guidance_step(avgpowerbufcircx.buf, avgpowerbufcircy.buf, avgpowerbufcircx.idx, avgpowerbufcircy.idx, &g_guidance_state, &g_guidance_params);
-    const char *dir_str = "??";
-    switch(dir) 
-    {
-      case STRAIGHT_AHEAD: dir_str = "FWD";     
-        break;
-      case TURN_LEFT:      dir_str = "LEFT";    
-        break;
-      case TURN_RIGHT:     dir_str = "RIGHT";   
-        break;
-      case TURN_AROUND:    dir_str = "UTURN";   
-        break;
+    guidance_count++;
+
+    if (guidance_count == 1) {
+      guidance_count = 0;
+      //Implement Guidance function call here.
+      Direction dir = guidance_step(avgpowerbufcircx.buf, avgpowerbufcircy.buf, avgpowerbufcircx.idx, avgpowerbufcircy.idx, &g_guidance_state, &g_guidance_params);
+      const char *dir_str = "?????";
+      switch(dir) 
+      {
+        case STRAIGHT_AHEAD: dir_str = "FWD";     
+          break;
+        case TURN_LEFT:      dir_str = "LEFT";    
+          break;
+        case TURN_RIGHT:     dir_str = "RIGHT";   
+          break;
+        case TURN_AROUND:    dir_str = "UTURN";   
+          break;
+      }
+      // snprintf(uart_buf, 1000, "avg x: %d  avg y: %d  dir: %s\n\r", (int) 10 * log10f(avgpower_x), (int) 10 * log10f(avgpower_y), dir_str);
+      snprintf(uart_buf, 1000, "parallel dB: %2d, perpindicular dB: %2d  dir: %5s\n\r", (int) avgpower_y, (int) avgpower_x, dir_str);
+      UART_Transmit(uart_buf);
+
     }
-    snprintf(uart_buf, 1000, "avg x: %d  avg y: %d  dir: %s\n\r", avgpower_x, avgpower_y, dir_str);
-    UART_Transmit(uart_buf);
   }
 }
 
