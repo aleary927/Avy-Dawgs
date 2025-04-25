@@ -58,7 +58,7 @@ static GuidanceParams g_guidance_params =
   .drop_steps    = 10,                   // how many drops before a U-turn
   .reverse_cd    = 40,                   // cooldown ticks after a U-turn
   .fwd_thresh    = 3.14159265/8.0f,      // straight‐ahead if angle ≤ 22.5°
-  .min_valid_mag =  10.0f                 // ignore magnitudes < 0 (i.e. never ignore)
+  .min_valid_mag =  4.0f                 // ignore magnitudes < 0 (i.e. never ignore)
 };
 
 /*************************
@@ -182,7 +182,7 @@ void process_step(void)
       guidance_count = 0;
       //Implement Guidance function call here.
       Direction dir = guidance_step(avgpowerbufcircx.buf, avgpowerbufcircy.buf, avgpowerbufcircx.idx, avgpowerbufcircy.idx, &g_guidance_state, &g_guidance_params);
-      const char *dir_str = "?????";
+      const char *dir_str = "????????";
       switch(dir) 
       {
         case STRAIGHT_AHEAD: dir_str = "FWD";     
@@ -193,11 +193,11 @@ void process_step(void)
           break;
         case TURN_AROUND:    dir_str = "UTURN";   
           break;
-        case NO_SIGNAL:      dir_str = "NOSIGNAL"
+        case NO_SIGNAL:      dir_str = "NOSIGNAL";
           break;
       }
       // snprintf(uart_buf, 1000, "avg x: %d  avg y: %d  dir: %s\n\r", (int) 10 * log10f(avgpower_x), (int) 10 * log10f(avgpower_y), dir_str);
-      snprintf(uart_buf, 1000, "parallel dB: %2d, perpindicular dB: %2d  dir: %5s\n\r", (int) avgpower_y, (int) avgpower_x, dir_str);
+      snprintf(uart_buf, 1000, "parallel dB: %2d, perpindicular dB: %2d  dir: %8s\n\r", (int) avgpower_y, (int) avgpower_x, dir_str);
       UART_Transmit(uart_buf);
 
     }
