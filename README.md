@@ -28,8 +28,12 @@ Miscellaneous scripts.
 
 ## Hardware Setup
 
-### MCU 
-STM32F722
+### MCU Board 
+NUCLEO-F722ZE 
+#### Pin Mappings
+* X antenna input: A0 (GPIOA PIN 3)
+* Y antenna input: A1 (GPIOC PIN 0)
+* UART TX: D1 (GPIOG PIN 14)
 ### Antennas
 Orthogonally mounted ferrite rod antennas on XY plane.
 Antennas have two windings, a primary for a resonant LC circuit, and a secondary to take signal from.
@@ -63,5 +67,3 @@ Available outputs:
 - `TURN_LEFT`
 - `TURN_RIGHT`
 - `TURN_AROUND`
-
-## Running the Project
