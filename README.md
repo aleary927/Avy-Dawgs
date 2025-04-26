@@ -34,7 +34,8 @@ STM32F722
 Orthogonally mounted ferrite rod antennas on XY plane.
 Antennas have two windings, a primary for a resonant LC circuit, and a secondary to take signal from.
 ### RF Front-End
-Amplifier, followed by ceramic filter, and then second amplifier. 
+RF amplifiying circuit designed using a TL084 to amplifiy inital signal with, followed by a 455 KHz ceramic filter with a 6dB insertion and +- 5KHz
+passband, lastly followed by a copy of the RF amplifiying circut to boost the initial signal to roughly 22dB after losing gain through the ceramic filter. 
 Total gain of about 22 dB.
 ### User Interface
 UART serial output.
