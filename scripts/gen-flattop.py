@@ -1,3 +1,6 @@
+'''
+Generate a flattop window for C.
+'''
 import numpy as np
 import scipy.signal.windows as windows
 import sys

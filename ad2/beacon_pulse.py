@@ -1,3 +1,7 @@
+'''
+Script to generate a pulsed 457 kHz signal immitating a beacon, outputting 
+via AD2 wavegen.
+'''
 import math 
 import matplotlib.pyplot as plt 
 import dwfpy as dwf

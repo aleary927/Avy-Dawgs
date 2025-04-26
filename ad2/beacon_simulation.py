@@ -1,3 +1,7 @@
+'''
+Simulates received antenna values from a beacon based on 
+location and orientation, outputting to AD2 wavegen.
+'''
 import math 
 from matplotlib.animation import FuncAnimation
 import matplotlib.pyplot as plt 

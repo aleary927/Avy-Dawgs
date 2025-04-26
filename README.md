@@ -22,9 +22,9 @@ Data sheet and manuals for STM board.
 ### mcu 
 All libraries and custom software.
 ### pcb 
-KiCAD project for RF front-end and ADC PCB.
+KiCAD project for ADC PCB.
 ### scripts
-Various scripts
+Miscallanious scripts.
 
 ## Hardware Setup
 
