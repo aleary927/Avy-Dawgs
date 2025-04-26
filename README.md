@@ -24,36 +24,36 @@ All libraries and custom software.
 ### pcb 
 KiCAD project for ADC PCB.
 ### scripts
-Miscallanious scripts.
+Miscellaneous scripts.
 
 ## Hardware Setup
 
 ### MCU 
 STM32F722
-### Signal Input
-Orthogonally mounted ferrite rod antennas on X and Y planes.
-### Signal Source
-457kHz analog waveform (from real avalanche beacon or simulated)
-### Analog Front-End
-Custom PCB with amplifier/filter
+### Antennas
+Orthogonally mounted ferrite rod antennas on XY plane.
+Antennas have two windings, a primary for a resonant LC circuit, and a secondary to take signal from.
+### RF Front-End
+Amplifier, followed by ceramic filter, and then second amplifier. 
+Total gain of about 22 dB.
 ### User Interface
-UART serial output
+UART serial output.
+Provides direction, and received signal power.
 
 ## Software Overview
 
-The firmware processes beacon signals in real-time using Goertzel filtering:
+The software processes input from the on-board analog-to-digital converters to produce a power reading at 457 kHz.
 
-- Samples X and Y channels
 - Removes DC bias and applies proper window
-- Filters signal for 457kHz signal using Goertzel algorithm
+- Calculates received power at 457 kHz using Goertzel algorithm.
 - Buffers results and computes rolling averages
-- Feeds values to `guidance_step()` to determine direction
-- Outputs results via UART
+- Determines direction to travel
+- Outputs direction and power via UART
 
-## Guidance Logic Summary
-This function compares signal strength trends and angular ratio between channels to select a movement direction.
+## Guidance Algorithm
+This algorithm uses signal strength trends and angular ratio between x and y channels to select a movement direction.
 
-- Enter reverse mode if signal is weakening
+- Tells user to reverses if signal is weakening
 - Otherwise steer using angle and recent ratio trends
 - Cooldown prevents flip-flopping between directions
 
