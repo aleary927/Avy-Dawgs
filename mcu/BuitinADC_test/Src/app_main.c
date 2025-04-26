@@ -18,7 +18,7 @@
  * Defines 
  * ********************/
 
-#define POWER_AVG_BUF_SIZE 100
+#define POWER_AVG_BUF_SIZE 20
 #define POWER_BUF_SIZE 5
 
 /********************* 
@@ -45,6 +45,8 @@ int burst_count;
 
 // count of avg power for calls to guicance 
 int guidance_count;
+
+int print_count;
 
 // buffer for usart transmit
 char uart_buf[1000];
@@ -112,10 +114,10 @@ void app_main(void)
  */
 void app_init(void) 
 {
-  // initialize burst count
+  // initialize counts
   burst_count = 0;
-  
   guidance_count = 0;
+  print_count = 0;
 
   // init power circ bufs
   circ_buf_init_float(&powerbufcircx, powerbufx, POWER_BUF_SIZE);
@@ -196,11 +198,36 @@ void process_step(void)
         case NO_SIGNAL:      dir_str = "NOSIGNAL";
           break;
       }
-      // snprintf(uart_buf, 1000, "avg x: %d  avg y: %d  dir: %s\n\r", (int) 10 * log10f(avgpower_x), (int) 10 * log10f(avgpower_y), dir_str);
-      snprintf(uart_buf, 1000, "parallel dB: %2d, perpindicular dB: %2d  dir: %8s\n\r", (int) avgpower_y, (int) avgpower_x, dir_str);
-      UART_Transmit(uart_buf);
+
+      // snprintf(uart_buf, 1000, "parallel dB: %2d, perpindicular dB: %2d  dir: %8s\n\r", (int) avgpower_y, (int) avgpower_x, dir_str);
+      // snprintf(uart_buf, 1000, "parallel dB: %2d, perpindicular dB: %2d    %8s\n\r", (int) avgpower_y, (int) avgpower_x, msg);
+      // UART_Transmit(uart_buf);
 
     }
+
+    print_count++;
+    if (print_count == 10) {
+      print_count = 0;
+
+      float max_x = 0;
+      float max_y = 0;
+
+      for (int i = 0; i < POWER_AVG_BUF_SIZE; i++) {
+        if (avgpowerbufx[i] > max_x) {
+          max_x = avgpowerbufx[i];
+        }
+        if (avgpowerbufy[i] > max_y) {
+          max_y = avgpowerbufy[i];
+        }
+      }
+
+      float x_db = 10 * log10f(max_x);
+      float y_db = 10 * log10f(max_y);
+
+      snprintf(uart_buf, 1000, "parallel dB: %2d; perpindicular dB: %2d \r\n", (int) y_db, (int) x_db);
+      UART_Transmit(uart_buf);
+    }
+
   }
 }
 
