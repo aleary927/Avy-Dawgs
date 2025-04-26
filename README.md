@@ -23,6 +23,8 @@ Data sheet and manuals for STM board.
 All libraries and custom software.
 ### pcb 
 KiCAD project for ADC PCB.
+### RF Frontend Amplifiers
+Different amplifer and filter circuits used to implement the RF frontend
 ### scripts
 Miscellaneous scripts.
 
