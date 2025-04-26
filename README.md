@@ -7,9 +7,8 @@
 * Noah Sikorski
 
 ## Project Purpose/Functionality
-This pupose of this project is to receive the 457kHz signal from a transmitting avalanche beacon and guide the user to it. This is a hanheld device that displays its calculated distance from the transmitting beacon as well as an arrow to guide the user to the transmitting beacon. 
-
-Because the range of our antenna isn't very long, we also wrote code to simulate the output of a transmitting beacon from a waveform generator in order to show the display of output and direction output by our device.
+This pupose of this project is to receive the 457kHz signal from a transmitting avalanche beacon and guide the user to it. 
+This is a hanheld device that displays its received power from the transmitting beacon as well as a direction that guides the user to the transmitting beacon. 
 
 ## Repository Structure 
 This repository is organized into the following folders. 
@@ -20,14 +19,12 @@ Beacon waveform simulation on Analog Discovery 2.
 Pathfinding algorithm and MATLAB simulations to test guidance algorithm.
 ### documentation/datasheets
 Data sheet and manuals for STM board.
-### fpga
-HDL files, constraint files, Vivado files.
 ### mcu 
 All libraries and custom software.
 ### pcb 
 KiCAD project for RF front-end and ADC PCB.
 ### scripts
-Generates C array to use as buffer for DSP code.
+Various scripts
 
 ## Hardware Setup
 
@@ -42,7 +39,7 @@ Custom PCB with amplifier/filter
 ### User Interface
 UART serial output
 
-## Firmware Overview
+## Software Overview
 
 The firmware processes beacon signals in real-time using Goertzel filtering:
 
@@ -51,7 +48,7 @@ The firmware processes beacon signals in real-time using Goertzel filtering:
 - Filters signal for 457kHz signal using Goertzel algorithm
 - Buffers results and computes rolling averages
 - Feeds values to `guidance_step()` to determine direction
-- Outputs result via UART
+- Outputs results via UART
 
 ## Guidance Logic Summary
 This function compares signal strength trends and angular ratio between channels to select a movement direction.
