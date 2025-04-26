@@ -57,6 +57,9 @@ timestep = 2
 # amplitues
 ant_amp = Vec2D(0, 0)
 
+# previous command (direction)
+prev_cmd = ""
+
 # path that was taken
 pathx = []
 pathy = []
@@ -73,7 +76,8 @@ def near_field_dipole_B(x, y):
     Calculate near field dipole.
     '''
 
-    mu0 = 4*np.pi*1e-7  # H/m
+    global mu0 
+
     r2 = x**2 + y**2
     if np.any(r2 == 0):
         raise ValueError("Field point at origin (r=0) is singular.")
@@ -101,6 +105,7 @@ def B_polar(coor: Vec2D) -> Polar:
     '''
     Calculate magnetic field in polar form based on x and y coordinates.
     ''' 
+    global mu0
 
     # distance squared
     r2 = coor.x**2 + coor.y**2
@@ -145,10 +150,34 @@ def parse_serial(event):
     '''
     Parse incoming serial messages.
     '''
+    global heading
+    global prev_cmd
+
     ser = serial.Serial("/dev/ttyUSB0", 115200)
 
     while not event.is_set():
         buf = ser.readline()
+
+        if str(buf).find("RIGHT") and prev_cmd != "RIGHT": 
+            prev_cmd = "RIGHT"
+            heading -= 22.5 * np.pi / 180
+
+        elif str(buf).find("LEFT") and prev_cmd != "LEFT":
+            prev_cmd = "LEFT"
+            heading += 22.5 * np.pi / 180
+
+        elif str(buf).find("FWD") and prev_cmd != "FWD":
+            prev_cmd = "FWD"
+
+        elif str(buf).find("UTURN") and prev_cmd != "UTURN":
+            prev_cmd = "UTURN"
+            heading += np.pi
+
+        if heading > 2*np.pi: 
+            heading -= 2 * np.pi
+        elif heading < 0: 
+            heading += 2 * np.pi
+
         # buf = ser.read_all()
         print(buf)
         # time.sleep(1)
@@ -170,7 +199,6 @@ def sim_step(event):
 
         # get the magnetic field at given location 
         B = B_polar(location)
-
         # calculate amplitude 
         new_amp = ant_xy(B, heading)
         ant_amp.x = amp_scale * new_amp.x
@@ -185,14 +213,12 @@ def sim_step(event):
         location.x = new_loc.x 
         location.y = new_loc.y
 
-        heading += 0.0
+        # heading += 0.0
 
-        if (heading < 0):
-            heading = 2 * np.pi + heading
-        elif (heading > 2 * np.pi):
-            heading -= 2 * np.pi
-
-        # plt.plot([location.x], [location.y])
+        # if (heading < 0):
+        #     heading = 2 * np.pi + heading
+        # elif (heading > 2 * np.pi):
+        #     heading -= 2 * np.pi
 
         print(f"New amplitude: x: {ant_amp.x}; y: {ant_amp.y}")
         print(f"New location: x: {location.x}; y: {location.y}")
@@ -242,6 +268,14 @@ if __name__ == "__main__":
     with dwf.Device() as device: 
 
         print(f"Found device: {device.name} ({device.serial_number})") 
+
+        # supplies
+        device.analog_io[0][1].value = 5
+        device.analog_io[0][0].value = True
+        device.analog_io[1][1].value = -2.5
+        device.analog_io[1][0].value = True
+        device.analog_io.master_enable = True
+
 
         halfsize = 5
         x = np.linspace(-halfsize, halfsize)
